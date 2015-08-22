@@ -9,5 +9,7 @@ export default class Pacman extends Mob {
     this._canConsume = [Point, BigPoint]
     this._maxSpeed = 5
     this._speed = 5
+
+    this.isAttackable = true
   }
 }

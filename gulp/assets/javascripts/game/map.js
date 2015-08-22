@@ -93,6 +93,10 @@ export default class Map extends PIXI.Container {
 
     const container = new PIXI.Container()
 
+    this._groundSprite = PIXI.Texture.fromFrame('level/ground.png')
+    this._backgroundSprite = new PIXI.TilingSprite(this._groundSprite, this._texture.width, this._texture.height)
+    container.addChild(this._backgroundSprite)
+
     this._map.forEach((row, y) => {
       row.forEach((cell, x) => {
         if (!cell) return

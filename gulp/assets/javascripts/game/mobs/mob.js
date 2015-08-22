@@ -23,6 +23,8 @@ export default class Mob {
 
     this._controlledByUser = false
     this._preferredDirection = null
+
+    this.isAttackable = false
   }
 
   _onKeyPressed (key) {

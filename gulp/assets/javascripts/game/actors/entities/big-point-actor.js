@@ -4,13 +4,23 @@ import Constants from '../../../constants'
 import EntityActor from './entity-actor'
 import Vector2 from '../../../math/vector2'
 
+const ANIMATION_INTERVAL = 0.3
+
 export default class BigPointActor extends EntityActor {
   constructor (...args) {
     super(...args)
 
-    this._sprite = PIXI.Sprite.fromFrame('entities/big-point.png')
-    this._sprite.anchor = new Vector2(0.5, 0.5)
-    this._sprite.tint = 0xff8000
+    this._textures = [
+      PIXI.Texture.fromFrame('entities/bottle-0.png'),
+      PIXI.Texture.fromFrame('entities/bottle-1.png'),
+      PIXI.Texture.fromFrame('entities/bottle-2.png'),
+      PIXI.Texture.fromFrame('entities/bottle-1.png')
+    ]
+    this._animationCounter = Math.random() * ANIMATION_INTERVAL
+    this._textureIndex = Math.floor(Math.random() * this._textures.length)
+
+    this._sprite = new PIXI.Sprite(this._textures[this._textureIndex])
+    this._sprite.anchor = new Vector2(0.5, 1)
     this.addChild(this._sprite)
   }
 
@@ -23,8 +33,15 @@ export default class BigPointActor extends EntityActor {
       .add(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2)
 
     this.position.x = position.x
-    this.position.y = position.y
+    this.position.y = position.y + 8
 
     this._sprite.visible = !this._object.consumed
+
+    this._animationCounter += delta
+    if (this._animationCounter > ANIMATION_INTERVAL) {
+      this._textureIndex = (this._textureIndex + 1) % this._textures.length
+      this._sprite.setTexture(this._textures[this._textureIndex])
+      this._animationCounter = 0
+    }
   }
 }
