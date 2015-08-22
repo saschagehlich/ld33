@@ -1,22 +1,17 @@
 /* global PIXI */
 
 import Constants from '../../../constants'
-import MobActor from './mob-actor'
+import EntityActor from './entity-actor'
 import Vector2 from '../../../math/vector2'
 
-export default class GhostActor extends MobActor {
+export default class BigPointActor extends EntityActor {
   constructor (...args) {
     super(...args)
 
-    this._sprite = PIXI.Sprite.fromFrame('mobs/ghost.png')
+    this._sprite = PIXI.Sprite.fromFrame('entities/big-point.png')
     this._sprite.anchor = new Vector2(0.5, 0.5)
+    this._sprite.tint = 0xff8000
     this.addChild(this._sprite)
-
-    this._caretSprite = PIXI.Sprite.fromFrame('mobs/caret.png')
-    this._caretSprite.anchor = new Vector2(0.5, 1)
-    this._caretSprite.position.y = -16
-    this._caretSprite.visible = false
-    this.addChild(this._caretSprite)
   }
 
   update (delta) {
@@ -30,6 +25,6 @@ export default class GhostActor extends MobActor {
     this.position.x = position.x
     this.position.y = position.y
 
-    this._caretSprite.visible = this._object.controlledByUser
+    this._sprite.visible = !this._object.consumed
   }
 }

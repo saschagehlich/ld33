@@ -1,10 +1,14 @@
 /* global _ */
 import Vector2 from '../../math/vector2'
+import Keyboard from '../../keyboard'
 
 export default class Mob {
   constructor (game, map) {
     this._game = game
     this._map = map
+
+    this._keyboard = new Keyboard()
+    this._keyboard.on('pressed', this._onKeyPressed.bind(this))
 
     this._consumableRadius = 0.5
     this._touchableRadius = 1.5
@@ -15,6 +19,29 @@ export default class Mob {
     this._speed = 5
     this._direction = 0
     this._directionVector = new Vector2(0, 1)
+    this._destinationPosition = null
+
+    this._controlledByUser = false
+    this._preferredDirection = null
+  }
+
+  _onKeyPressed (key) {
+    if (!this.controlledByUser) return
+
+    switch (key) {
+      case 'UP':
+        this._preferredDirection = 0
+        break
+      case 'RIGHT':
+        this._preferredDirection = 1
+        break
+      case 'DOWN':
+        this._preferredDirection = 2
+        break
+      case 'LEFT':
+        this._preferredDirection = 3
+        break
+    }
   }
 
   setPosition (position) {
@@ -36,6 +63,7 @@ export default class Mob {
 
   _findDestinationPosition () {
     const currentPosition = this._position.clone().floor()
+    const onlyStraight = this._controlledByUser
 
     const directions = {
       straight: this._direction,
@@ -57,21 +85,32 @@ export default class Mob {
       possibleDirections.push('straight')
       possibleDirections.push('straight')
     }
-    if (neighborPositions.right) {
+    if (neighborPositions.right && !onlyStraight) {
       possibleDirections.push('right')
     }
-    if (neighborPositions.left) {
+    if (neighborPositions.left && !onlyStraight) {
       possibleDirections.push('left')
     }
-    if (!possibleDirections.length && neighborPositions.back) {
+    if (!possibleDirections.length && neighborPositions.back && !onlyStraight) {
       possibleDirections.push('back')
     }
 
     const newDirection = _.sample(possibleDirections)
+    const destinationPosition = neighborPositions[newDirection]
 
+    // No destination - just stay
+    if (!destinationPosition) {
+      this._walkTo(currentPosition, this._direction)
+      return
+    }
+
+    this._walkTo(destinationPosition, directions[newDirection])
+  }
+
+  _walkTo (position, direction) {
     this._startPosition = this._position.clone()
-    this._destinationPosition = neighborPositions[newDirection]
-    this._direction = directions[newDirection]
+    this._destinationPosition = position
+    this._direction = direction
 
     const distVector = this._destinationPosition.clone()
       .subtract(this._startPosition)
@@ -92,7 +131,23 @@ export default class Mob {
 
     if (progress >= 1) {
       this._position.copy(this._destinationPosition)
-      this._findDestinationPosition()
+      this._onDestinationReached()
+    }
+  }
+
+  _onDestinationReached () {
+    if (!this.controlledByUser) {
+      return this._findDestinationPosition()
+    }
+
+    if (this._preferredDirection !== null) {
+      const currentPosition = this._position.clone().floor()
+      const destinationPosition = this._map.getWalkablePositionWithDirection(currentPosition, this._preferredDirection)
+      if (destinationPosition && this._preferredDirection !== this._direction) {
+        this._walkTo(destinationPosition, this._preferredDirection)
+      } else {
+        this._findDestinationPosition()
+      }
     }
   }
 
@@ -126,4 +181,15 @@ export default class Mob {
   }
 
   get position () { return this._position }
+  get controlledByUser () { return this._controlledByUser }
+
+  set controlledByUser (controlledByUser) {
+    this._controlledByUser = controlledByUser
+    if (!controlledByUser) {
+      this._preferredDirection = null
+    } else {
+      console.log('preferring', this._direction)
+      this._preferredDirection = this._direction
+    }
+  }
 }

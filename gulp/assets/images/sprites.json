@@ -1,12 +1,28 @@
 {"frames": {
 
-"entities/point.png":
+"entities/big-point.png":
 {
-	"frame": {"x":48,"y":20,"w":8,"h":8},
+	"frame": {"x":66,"y":12,"w":12,"h":12},
 	"rotated": false,
 	"trimmed": true,
-	"spriteSourceSize": {"x":4,"y":4,"w":8,"h":8},
+	"spriteSourceSize": {"x":2,"y":2,"w":12,"h":12},
 	"sourceSize": {"w":16,"h":16}
+},
+"entities/point.png":
+{
+	"frame": {"x":28,"y":22,"w":4,"h":4},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":6,"w":4,"h":4},
+	"sourceSize": {"w":16,"h":16}
+},
+"mobs/caret.png":
+{
+	"frame": {"x":66,"y":2,"w":14,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":8},
+	"sourceSize": {"w":14,"h":8}
 },
 "mobs/ghost.png":
 {
@@ -37,8 +53,8 @@
 	"version": "1.0",
 	"image": "sprites.png",
 	"format": "RGBA8888",
-	"size": {"w":66,"h":30},
+	"size": {"w":82,"h":28},
 	"scale": "2",
-	"smartupdate": "$TexturePacker:SmartUpdate:70a5dc1b29ec3585977534ecf7d3ecbe:91f240b7ed0bb187430231f3a3b19a89:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b8ec6a2166dbdd7f3c90fa559c42d701:d25ec20f5de04f8b064494f16fb39036:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

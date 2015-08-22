@@ -19,6 +19,7 @@ export default class Map extends PIXI.Container {
     this.addChild(this._sprite)
 
     this._pointSpawns = []
+    this._bigPointSpawns = []
     this._pacmanSpawns = []
     this._ghostSpawns = []
 
@@ -75,6 +76,11 @@ export default class Map extends PIXI.Container {
         // Point spawn
         if (!r && g === 255 && !b) {
           this._pointSpawns.push(new Vector2(x, y))
+        }
+
+        // Big point spawn
+        if (r === 255 && g === 128 && !b) {
+          this._bigPointSpawns.push(new Vector2(x, y))
         }
       }
       map.push(row)
@@ -136,11 +142,10 @@ export default class Map extends PIXI.Container {
       }
     }
 
-    // console.log(position)
-
     return this.isPositionWalkable(position) ? position : null
   }
 
   get pointSpawns () { return this._pointSpawns }
+  get bigPointSpawns () { return this._bigPointSpawns }
   get ghostSpawns () { return this._ghostSpawns }
 }

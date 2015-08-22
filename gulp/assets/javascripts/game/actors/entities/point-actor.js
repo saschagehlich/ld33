@@ -10,6 +10,7 @@ export default class PointActor extends EntityActor {
 
     this._sprite = PIXI.Sprite.fromFrame('entities/point.png')
     this._sprite.anchor = new Vector2(0.5, 0.5)
+    this._sprite.tint = 0xff8000
     this.addChild(this._sprite)
   }
 
