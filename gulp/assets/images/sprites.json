@@ -2,11 +2,19 @@
 
 "entities/point.png":
 {
-	"frame": {"x":28,"y":20,"w":8,"h":8},
+	"frame": {"x":48,"y":20,"w":8,"h":8},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":4,"y":4,"w":8,"h":8},
 	"sourceSize": {"w":16,"h":16}
+},
+"mobs/ghost.png":
+{
+	"frame": {"x":28,"y":2,"w":18,"h":18},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":6,"y":8,"w":18,"h":18},
+	"sourceSize": {"w":32,"h":32}
 },
 "mobs/pacman.png":
 {
@@ -18,7 +26,7 @@
 },
 "walls/wall.png":
 {
-	"frame": {"x":28,"y":2,"w":16,"h":16},
+	"frame": {"x":48,"y":2,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -29,8 +37,8 @@
 	"version": "1.0",
 	"image": "sprites.png",
 	"format": "RGBA8888",
-	"size": {"w":46,"h":30},
+	"size": {"w":66,"h":30},
 	"scale": "2",
-	"smartupdate": "$TexturePacker:SmartUpdate:045c7da863ff3b9d6f659e3f6a204308:9658ef8997a004791cc9e454fed1b4d8:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:70a5dc1b29ec3585977534ecf7d3ecbe:91f240b7ed0bb187430231f3a3b19a89:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

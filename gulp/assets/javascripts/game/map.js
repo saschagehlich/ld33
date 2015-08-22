@@ -112,5 +112,35 @@ export default class Map extends PIXI.Container {
     }
   }
 
+  isPositionWalkable (position) {
+    const cell = this._map[position.y] && this._map[position.y][position.x]
+    return cell !== 1 && typeof cell !== 'undefined' && cell !== false
+  }
+
+  getWalkablePositionWithDirection (position, direction) {
+    position = position.clone()
+    if (typeof direction !== undefined) {
+      switch (direction) {
+        case 0:
+          position.add(0, -1)
+          break
+        case 1:
+          position.add(1, 0)
+          break
+        case 2:
+          position.add(0, 1)
+          break
+        case 3:
+          position.add(-1, 0)
+          break
+      }
+    }
+
+    // console.log(position)
+
+    return this.isPositionWalkable(position) ? position : null
+  }
+
   get pointSpawns () { return this._pointSpawns }
+  get ghostSpawns () { return this._ghostSpawns }
 }

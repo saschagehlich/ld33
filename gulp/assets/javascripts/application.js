@@ -69,10 +69,10 @@ export default class Application {
 
   update () {
     const now = window.performance.now()
-    const delta = this._lastTick - now
+    const delta = now - this._lastTick
 
     if (this._scene) {
-      this._scene.update(delta)
+      this._scene.update(delta / 1000)
     }
 
     this._lastTick = now

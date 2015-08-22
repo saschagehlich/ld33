@@ -6,5 +6,7 @@ export default class Pacman extends Mob {
     super(...args)
 
     this._canConsume = [Point]
+    this._maxSpeed = 5
+    this._speed = 5
   }
 }
