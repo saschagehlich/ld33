@@ -10,18 +10,15 @@ export default class Map extends PIXI.Container {
 
     this._renderedToTexture = false
 
-    const { canvasSize } = this._app
     const mapSize = new Vector2(
-      Constants.SPRITE_SIZE * Constants.MAP_TILES_X,
-      Constants.SPRITE_SIZE * Constants.MAP_TILES_Y
+      Constants.TILE_SIZE * Constants.MAP_TILES_X,
+      Constants.TILE_SIZE * Constants.MAP_TILES_Y
     )
     this._texture = new PIXI.RenderTexture(this._app.renderer, mapSize.x, mapSize.y)
     this._sprite = new PIXI.Sprite(this._texture)
-    this._sprite.anchor = new Vector2(0.5, 0.5)
-    this._sprite.position = canvasSize.clone().divide(2)
-
     this.addChild(this._sprite)
 
+    this._pointSpawns = []
     this._pacmanSpawns = []
     this._ghostSpawns = []
 
@@ -56,7 +53,7 @@ export default class Map extends PIXI.Container {
 
         const r = imageData[index]
         const g = imageData[index + 1]
-        const b = imageData[index + 1]
+        const b = imageData[index + 2]
 
         if (r === 255 && g === 255 && b === 255) {
           // Wall
@@ -65,14 +62,19 @@ export default class Map extends PIXI.Container {
           row.push(0)
         }
 
+        // Pacman spawn
         if (r === 255 && !g && !b) {
-          // Pacman spawn
           this._pacmanSpawns.push(new Vector2(x, y))
         }
 
+        // Ghost spawn
         if (!r && !g && b === 255) {
-          // Ghost spawn
           this._ghostSpawns.push(new Vector2(x, y))
+        }
+
+        // Point spawn
+        if (!r && g === 255 && !b) {
+          this._pointSpawns.push(new Vector2(x, y))
         }
       }
       map.push(row)
@@ -89,11 +91,11 @@ export default class Map extends PIXI.Container {
       row.forEach((cell, x) => {
         if (!cell) return
 
-        let sprite = PIXI.Sprite.fromFrame('cross.png')
+        let sprite = PIXI.Sprite.fromFrame('walls/wall.png')
 
         sprite.position = new Vector2(
-          x * Constants.SPRITE_SIZE,
-          y * Constants.SPRITE_SIZE
+          x * Constants.TILE_SIZE,
+          y * Constants.TILE_SIZE
         )
 
         container.addChild(sprite)
@@ -109,4 +111,6 @@ export default class Map extends PIXI.Container {
       this._renderToTexture()
     }
   }
+
+  get pointSpawns () { return this._pointSpawns }
 }

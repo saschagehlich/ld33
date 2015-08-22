@@ -182,6 +182,12 @@ export default class Vector2 {
     return this
   }
 
+  abs () {
+    this.x = Math.abs(this.x)
+    this.y = Math.abs(this.y)
+    return this
+  }
+
   /**
    * Returns a string representation of this vector
    * @return {String}

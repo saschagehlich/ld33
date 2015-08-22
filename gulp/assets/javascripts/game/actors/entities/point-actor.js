@@ -1,14 +1,14 @@
 /* global PIXI */
 
 import Constants from '../../../constants'
-import MobActor from './mob-actor'
+import EntityActor from './entity-actor'
 import Vector2 from '../../../math/vector2'
 
-export default class PacmanActor extends MobActor {
+export default class PointActor extends EntityActor {
   constructor (...args) {
     super(...args)
 
-    this._sprite = PIXI.Sprite.fromFrame('mobs/pacman.png')
+    this._sprite = PIXI.Sprite.fromFrame('entities/point.png')
     this._sprite.anchor = new Vector2(0.5, 0.5)
     this.addChild(this._sprite)
   }
@@ -23,5 +23,7 @@ export default class PacmanActor extends MobActor {
 
     this.position.x = position.x
     this.position.y = position.y
+
+    this._sprite.visible = !this._object.consumed
   }
 }

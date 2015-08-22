@@ -190,7 +190,7 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>gulp/assets/images/sprites/walls</filename>
+            <filename>gulp/assets/images/sprites</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -1,5 +1,6 @@
 /* global PIXI */
 
+import Stats from 'stats.js'
 import GameScene from './scenes/game-scene'
 import Vector2 from './math/vector2'
 import Constants from './constants'
@@ -25,6 +26,19 @@ export default class Application {
     this._loader.load()
 
     this._tick = this._tick.bind(this)
+
+    this._initStats()
+  }
+
+  _initStats () {
+    this._stats = new Stats()
+    this._stats.setMode(0)
+
+    this._stats.domElement.style.position = 'absolute';
+    this._stats.domElement.style.left = '0px';
+    this._stats.domElement.style.top = '0px';
+
+    document.body.appendChild(this._stats.domElement)
   }
 
   _onAssetsLoaded (loader, resources) {
@@ -44,9 +58,10 @@ export default class Application {
   }
 
   _tick () {
+    this._stats.begin()
     this.update()
     this.render()
-
+    this._stats.end()
     if (this._running) {
       window.requestAnimationFrame(this._tick)
     }
