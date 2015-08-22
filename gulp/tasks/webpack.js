@@ -8,8 +8,6 @@ gulp.task('webpack', function (cb) {
     .pipe(webpack(config.webpack, null, function (err, stats) {
       if (err) throw err
 
-      console.log(stats.compilation.errors)
-
       if (stats.hasErrors() && config.env === 'production') {
         throw new gutil.PluginError('webpack', stats.compilation.errors[0])
       }
