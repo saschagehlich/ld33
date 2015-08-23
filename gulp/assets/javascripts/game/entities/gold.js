@@ -1,6 +1,6 @@
 import Entity from './entity'
 
-export default class Point extends Entity {
+export default class Gold extends Entity {
   constructor (...args) {
     super(...args)
 

@@ -1,7 +1,7 @@
 export default {
-  GAME_WIDTH: 500,
-  GAME_HEIGHT: 500,
+  GAME_WIDTH: 800,
+  GAME_HEIGHT: 600,
   TILE_SIZE: 16,
   MAP_TILES_X: 29,
-  MAP_TILES_Y: 31
+  MAP_TILES_Y: 33
 }

@@ -6,7 +6,7 @@ import Vector2 from '../../../math/vector2'
 
 const ANIMATION_INTERVAL = 0.3
 
-export default class BigPointActor extends EntityActor {
+export default class BottleActor extends EntityActor {
   constructor (...args) {
     super(...args)
 
@@ -40,7 +40,7 @@ export default class BigPointActor extends EntityActor {
     this._animationCounter += delta
     if (this._animationCounter > ANIMATION_INTERVAL) {
       this._textureIndex = (this._textureIndex + 1) % this._textures.length
-      this._sprite.setTexture(this._textures[this._textureIndex])
+      this._sprite.texture = this._textures[this._textureIndex]
       this._animationCounter = 0
     }
   }

@@ -18,16 +18,16 @@ export default class Map extends PIXI.Container {
     this._sprite = new PIXI.Sprite(this._texture)
     this.addChild(this._sprite)
 
-    this._pointSpawns = []
-    this._bigPointSpawns = []
-    this._pacmanSpawns = []
-    this._ghostSpawns = []
+    this._goldSpawns = []
+    this._bottleSpawns = []
+    this._heroSpawns = []
+    this._monsterSpawns = []
 
     this._map = this._readMapData()
   }
 
-  getRandomPacmanSpawn () {
-    return _.sample(this._pacmanSpawns)
+  getRandomHeroSpawn () {
+    return _.sample(this._heroSpawns)
   }
 
   update (delta) {
@@ -63,24 +63,24 @@ export default class Map extends PIXI.Container {
           row.push(0)
         }
 
-        // Pacman spawn
+        // Hero spawn
         if (r === 255 && !g && !b) {
-          this._pacmanSpawns.push(new Vector2(x, y))
+          this._heroSpawns.push(new Vector2(x, y))
         }
 
-        // Ghost spawn
+        // Monster spawn
         if (!r && !g && b === 255) {
-          this._ghostSpawns.push(new Vector2(x, y))
+          this._monsterSpawns.push(new Vector2(x, y))
         }
 
-        // Point spawn
+        // Gold spawn
         if (!r && g === 255 && !b) {
-          this._pointSpawns.push(new Vector2(x, y))
+          this._goldSpawns.push(new Vector2(x, y))
         }
 
-        // Big point spawn
+        // Bottle spawn
         if (r === 255 && g === 128 && !b) {
-          this._bigPointSpawns.push(new Vector2(x, y))
+          this._bottleSpawns.push(new Vector2(x, y))
         }
       }
       map.push(row)
@@ -94,14 +94,49 @@ export default class Map extends PIXI.Container {
     const container = new PIXI.Container()
 
     this._groundSprite = PIXI.Texture.fromFrame('level/ground.png')
-    this._backgroundSprite = new PIXI.TilingSprite(this._groundSprite, this._texture.width, this._texture.height)
+    this._backgroundSprite = new PIXI.extras.TilingSprite(this._groundSprite, this._texture.width, this._texture.height)
     container.addChild(this._backgroundSprite)
 
     this._map.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        if (!cell) return
+      row.forEach((tile, x) => {
+        if (!tile) return
 
-        let sprite = PIXI.Sprite.fromFrame('walls/wall.png')
+        const topTile = this._map[y - 1] && this._map[y - 1][x]
+        const rightTile = row[x + 1]
+        const bottomTile = this._map[y + 1] && this._map[y + 1][x]
+        const leftTile = row[x - 1]
+        const bottomLeftTile = this._map[y + 1] && this._map[y + 1][x - 1]
+        const bottomRightTile = this._map[y + 1] && this._map[y + 1][x + 1]
+
+        let sprite
+
+        if (topTile && rightTile && bottomTile && leftTile && bottomLeftTile && bottomRightTile) {
+          const index = Math.ceil(Math.random() * 3)
+          sprite = PIXI.Sprite.fromFrame(`level/wall-default-${index}.png`)
+        } else if (!bottomTile) {
+          sprite = PIXI.Sprite.fromFrame('level/wall.png')
+        } else if (!topTile && !leftTile) {
+          sprite = PIXI.Sprite.fromFrame('level/wall-top-left.png')
+        } else if (!topTile && !rightTile) {
+          sprite = PIXI.Sprite.fromFrame('level/wall-top-right.png')
+        } else if (!leftTile && !rightTile) {
+          sprite = PIXI.Sprite.fromFrame('level/wall-leftright.png')
+        } else if ((topTile && !leftTile) || (topTile && leftTile && !bottomLeftTile)) {
+          if (!bottomRightTile) {
+            sprite = PIXI.Sprite.fromFrame('level/wall-leftright.png')
+          } else {
+            sprite = PIXI.Sprite.fromFrame('level/wall-left.png')
+          }
+        } else if ((topTile && !rightTile) || (topTile && rightTile && !bottomRightTile)) {
+          if (!bottomLeftTile) {
+            sprite = PIXI.Sprite.fromFrame('level/wall-leftright.png')
+          } else {
+            sprite = PIXI.Sprite.fromFrame('level/wall-right.png')
+          }
+        } else if (!topTile) {
+          const index = Math.ceil(Math.random() * 3)
+          sprite = PIXI.Sprite.fromFrame(`level/wall-top-${index}.png`)
+        }
 
         sprite.position = new Vector2(
           x * Constants.TILE_SIZE,
@@ -123,8 +158,8 @@ export default class Map extends PIXI.Container {
   }
 
   isPositionWalkable (position) {
-    const cell = this._map[position.y] && this._map[position.y][position.x]
-    return cell !== 1 && typeof cell !== 'undefined' && cell !== false
+    const tile = this._map[position.y] && this._map[position.y][position.x]
+    return tile !== 1 && typeof tile !== 'undefined' && tile !== false
   }
 
   getWalkablePositionWithDirection (position, direction) {
@@ -149,7 +184,7 @@ export default class Map extends PIXI.Container {
     return this.isPositionWalkable(position) ? position : null
   }
 
-  get pointSpawns () { return this._pointSpawns }
-  get bigPointSpawns () { return this._bigPointSpawns }
-  get ghostSpawns () { return this._ghostSpawns }
+  get goldSpawns () { return this._goldSpawns }
+  get bottleSpawns () { return this._bottleSpawns }
+  get monsterSpawns () { return this._monsterSpawns }
 }

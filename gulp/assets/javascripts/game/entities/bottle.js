@@ -1,6 +1,6 @@
 import Entity from './entity'
 
-export default class BigPoint extends Entity {
+export default class Bottle extends Entity {
   constructor (...args) {
     super(...args)
 

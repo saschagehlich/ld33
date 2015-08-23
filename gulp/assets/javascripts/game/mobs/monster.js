@@ -1,6 +1,6 @@
 import Mob from './mob'
 
-export default class Ghost extends Mob {
+export default class Monster extends Mob {
   constructor (...args) {
     super(...args)
 

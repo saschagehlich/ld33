@@ -2,17 +2,18 @@
 
 import Keyboard from '../keyboard.js'
 
-import Pacman from './mobs/pacman'
-import PacmanActor from './actors/mobs/pacman-actor'
+import Hero from './mobs/hero'
+import HeroActor from './actors/mobs/hero-actor'
 
-import Ghost from './mobs/ghost'
-import GhostActor from './actors/mobs/ghost-actor'
+import Monster from './mobs/monster'
+import MonsterActor from './actors/mobs/monster-actor'
 
-import Point from './entities/point'
-import PointActor from './actors/entities/point-actor'
+import Gold from './entities/gold'
+import GoldActor from './actors/entities/gold-actor'
 
-import BigPoint from './entities/big-point'
-import BigPointActor from './actors/entities/big-point-actor'
+import Bottle from './entities/bottle'
+import BottleActor from './actors/entities/bottle-actor'
+
 export default class Game extends PIXI.Container {
   constructor (app, map) {
     super()
@@ -25,104 +26,104 @@ export default class Game extends PIXI.Container {
 
     this._actors = []
     this._mobs = []
-    this._ghosts = []
+    this._monsters = []
 
     // TODO rename to consumables
-    this._points = []
+    this._entities = []
 
-    this._createPoints()
-    this._spawnPacman()
-    this._spawnGhosts()
+    this._createEntities()
+    this._spawnHero()
+    this._spawnMonsters()
 
     this._keyboard.on('pressed', this._onKeyPressed.bind(this))
   }
 
   _onKeyPressed (key) {
     if (key === 'SHIFT') {
-      this._switchControlledGhost()
+      this._switchControlledMonster()
     }
   }
 
-  _switchControlledGhost () {
-    const currentGhost = this._ghosts[this._controlledGhostIndex]
-    currentGhost.controlledByUser = false
+  _switchControlledMonster () {
+    const currentMonster = this._monsters[this._controlledMonsterIndex]
+    currentMonster.controlledByUser = false
 
-    this._controlledGhostIndex = (this._controlledGhostIndex + 1) % this._ghosts.length
-    const newGhost = this._ghosts[this._controlledGhostIndex]
-    newGhost.controlledByUser = true
+    this._controlledMonsterIndex = (this._controlledMonsterIndex + 1) % this._monsters.length
+    const newMonster = this._monsters[this._controlledMonsterIndex]
+    newMonster.controlledByUser = true
   }
 
-  _createPoints () {
-    const pointSpawns = this._map.pointSpawns
+  _createEntities () {
+    const goldSpawns = this._map.goldSpawns
 
-    this._points = []
-    pointSpawns.forEach((position, i) => {
-      const point = new Point(this, this._map)
-      point.setPosition(position)
+    this._entities = []
+    goldSpawns.forEach((position, i) => {
+      const gold = new Gold(this, this._map)
+      gold.setPosition(position)
 
-      const pointActor = new PointActor(this, point)
+      const goldActor = new GoldActor(this, gold)
 
-      this._points.push(point)
-      this.addChild(pointActor)
-      this._actors.push(pointActor)
+      this._entities.push(gold)
+      this.addChild(goldActor)
+      this._actors.push(goldActor)
     })
 
-    const bigPointSpawns = this._map.bigPointSpawns
-    bigPointSpawns.forEach((position, i) => {
-      const point = new BigPoint(this, this._map)
-      point.setPosition(position)
+    const bottleSpawns = this._map.bottleSpawns
+    bottleSpawns.forEach((position, i) => {
+      const bottle = new Bottle(this, this._map)
+      bottle.setPosition(position)
 
-      const pointActor = new BigPointActor(this, point)
+      const bottleActor = new BottleActor(this, bottle)
 
-      this._points.push(point)
-      this.addChild(pointActor)
-      this._actors.push(pointActor)
+      this._entities.push(bottle)
+      this.addChild(bottleActor)
+      this._actors.push(bottleActor)
     })
   }
 
-  _spawnGhosts () {
-    const spawns = this._map.ghostSpawns
+  _spawnMonsters () {
+    const spawns = this._map.monsterSpawns
 
     spawns.forEach((position, i) => {
-      const ghost = new Ghost(this, this._map)
-      ghost.setPosition(position)
+      const monster = new Monster(this, this._map)
+      monster.setPosition(position)
 
-      if (i === this._controlledGhostIndex) {
-        ghost.controlledByUser = true
+      if (i === this._controlledMonsterIndex) {
+        monster.controlledByUser = true
       }
 
-      const actor = new GhostActor(this, ghost)
-      this._mobs.push(ghost)
-      this._ghosts.push(ghost)
+      const actor = new MonsterActor(this, monster)
+      this._mobs.push(monster)
+      this._monsters.push(monster)
       this._actors.push(actor)
       this.addChild(actor)
     })
   }
 
-  _spawnPacman () {
-    const spawn = this._map.getRandomPacmanSpawn()
+  _spawnHero () {
+    const spawn = this._map.getRandomHeroSpawn()
 
-    this._pacman = new Pacman(this, this._map)
-    this._pacman.setPosition(spawn)
+    this._hero = new Hero(this, this._map)
+    this._hero.setPosition(spawn)
 
-    const actor = new PacmanActor(this, this._pacman)
-    this._mobs.push(this._pacman)
+    const actor = new HeroActor(this, this._hero)
+    this._mobs.push(this._hero)
     this._actors.push(actor)
     this.addChild(actor)
   }
 
   getTouchedEntitiesForMob (mob) {
-    return this._points.filter((point) =>
-      mob.touchesEntity(point)
+    return this._entities.filter((entity) =>
+      mob.touchesEntity(entity)
     )
   }
 
   update (delta) {
     this._mobs.forEach((mob) => mob.update(delta))
-    this._points.forEach((point) => point.update(delta))
+    this._entities.forEach((entity) => entity.update(delta))
     this._actors.forEach((actor) => actor.update(delta))
 
-    // this._pacman.position.x -= 1 * delta
+    // this._hero.position.x -= 1 * delta
   }
 
   render (renderer) {
