@@ -1,7 +1,11 @@
-/* global PIXI, Howler, _ */
+/* global PIXI, _ */
 
 import Keyboard from '../keyboard.js'
 import Constants from '../constants'
+
+import Map from './map'
+import UI from './ui'
+import GameOver from './game-over'
 
 import Hero from './mobs/hero'
 import HeroActor from './actors/mobs/hero-actor'
@@ -26,11 +30,19 @@ const MONSTER_COLORS = [
 ]
 
 export default class Game extends PIXI.Container {
-  constructor (app, map) {
+  constructor (app) {
     super()
 
     this._app = app
-    this._map = map
+    this._map = new Map(this._app)
+    this._map.render()
+
+    this._container = new PIXI.Container()
+    this._container.position = new PIXI.Point(35, 35)
+    this.addChild(this._container)
+
+    this._container.addChild(this._map)
+
     this._keyboard = new Keyboard()
 
     this._controlledMonsterIndex = 0
@@ -49,16 +61,29 @@ export default class Game extends PIXI.Container {
     this._spawnHero()
     this._spawnMonsters()
 
-    this._keyboard.on('pressed', this._onKeyPressed.bind(this))
+    this._onKeyPressed = this._onKeyPressed.bind(this)
+    this._keyboard.on('pressed', this._onKeyPressed)
+
+    this._initUI()
+  }
+
+  _initUI () {
+    this._ui = new UI(this._app, this)
+    this.addChild(this._ui)
   }
 
   playSound (sound) {
     this._app.sound.play(sound)
   }
 
-  _onKeyPressed (key) {
+  _onKeyPressed (key, e) {
     if (key === 'SHIFT') {
       this._switchControlledMonster()
+    }
+
+    if (key === 'SPACE' && this._gameOver) {
+      this._app.startGame()
+      e.preventDefault()
     }
   }
 
@@ -91,7 +116,7 @@ export default class Game extends PIXI.Container {
       this._entitiesMap[position.y][position.x] = gold
       this._entities.push(gold)
 
-      this.addChild(goldActor)
+      this._container.addChild(goldActor)
       this._actors.push(goldActor)
     })
 
@@ -108,7 +133,7 @@ export default class Game extends PIXI.Container {
       this._entitiesMap[position.y][position.x] = bottle
       this._entities.push(bottle)
 
-      this.addChild(bottleActor)
+      this._container.addChild(bottleActor)
       this._actors.push(bottleActor)
     })
   }
@@ -156,7 +181,7 @@ export default class Game extends PIXI.Container {
       this._mobs.push(monster)
       this._monsters.push(monster)
       this._actors.push(actor)
-      this.addChild(actor)
+      this._container.addChild(actor)
     })
   }
 
@@ -169,7 +194,7 @@ export default class Game extends PIXI.Container {
     const actor = new HeroActor(this, this._hero)
     this._mobs.push(this._hero)
     this._actors.push(actor)
-    this.addChild(actor)
+    this._container.addChild(actor)
   }
 
   getTouchedEntitiesForMob (mob) {
@@ -186,6 +211,10 @@ export default class Game extends PIXI.Container {
   }
 
   update (delta) {
+    if (this._gameOver) {
+      return this._gameOver.update()
+    }
+
     this._mobs.forEach((mob) => mob.update(delta))
     this._entities.forEach((entity) => entity.update(delta))
     this._actors.forEach((actor) => actor.update(delta))
@@ -209,6 +238,9 @@ export default class Game extends PIXI.Container {
     if (!consumableEntities.length) {
       this.gameOver(false, 'The hero was able to collect all the gold')
     }
+
+    this._ui.update(delta)
+    this._map.update(delta)
   }
 
   getNextAliveMonster () {
@@ -218,8 +250,9 @@ export default class Game extends PIXI.Container {
     return _.sample(aliveMonsters)
   }
 
-  gameOver () {
-    throw new Error('Game Over')
+  gameOver (win, reason) {
+    this._gameOver = new GameOver(this, this._app, win, reason)
+    this.addChild(this._gameOver)
   }
 
   render (renderer) {
@@ -249,7 +282,7 @@ export default class Game extends PIXI.Container {
     this._actors.push(fartActor)
     this._fartActors.push(fartActor)
 
-    this.addChild(fartActor)
+    this._container.addChild(fartActor)
   }
 
   bottleInactive () {
@@ -273,5 +306,9 @@ export default class Game extends PIXI.Container {
 
   get hero () {
     return this._hero
+  }
+
+  dispose () {
+    this._keyboard.dispose()
   }
 }

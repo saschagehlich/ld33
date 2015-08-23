@@ -89,8 +89,11 @@ export default class Keyboard extends EventEmitter {
       this._keyStates[KEYS[key]] = false
     }
 
-    window.addEventListener('keydown', this._onKeyDown.bind(this))
-    window.addEventListener('keyup', this._onKeyUp.bind(this))
+    this._onKeyDown = this._onKeyDown.bind(this)
+    this._onKeyUp = this._onKeyUp.bind(this)
+
+    window.addEventListener('keydown', this._onKeyDown)
+    window.addEventListener('keyup', this._onKeyUp)
   }
 
   _onKeyDown (e) {
@@ -99,19 +102,24 @@ export default class Keyboard extends EventEmitter {
     }
 
     if (typeof this._keyStates[e.keyCode] !== 'undefined') {
-      this.emit('pressed', KEY_CODES[e.keyCode])
+      this.emit('pressed', KEY_CODES[e.keyCode], e)
       this._keyStates[e.keyCode] = true
     }
   }
 
   _onKeyUp (e) {
     if (typeof this._keyStates[e.keyCode] !== 'undefined') {
-      this.emit('released', KEY_CODES[e.keyCode])
+      this.emit('released', KEY_CODES[e.keyCode], e)
       this._keyStates[e.keyCode] = false
     }
   }
 
   isKeyPressed (keyName) {
     return this._keyStates[KEYS[keyName]]
+  }
+
+  dispose () {
+    window.removeEventListener('keydown', this._onKeyDown)
+    window.removeEventListener('keyup', this._onKeyUp)
   }
 }
