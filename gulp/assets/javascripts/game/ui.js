@@ -51,7 +51,14 @@ export default class Game extends PIXI.Container {
     this._loScoreHeadline.position.x = canvasSize.x - 35 - this._loScoreHeadline.textWidth
     this._loScoreHeadline.position.y = 35
 
-    this._loScoreText = new PIXI.extras.BitmapText('-', this._headlineStyle)
+    let loScore = window.localStorage.getItem('score')
+    if (loScore === null) {
+      loScore = '-'
+    } else {
+      loScore = loScore
+    }
+
+    this._loScoreText = new PIXI.extras.BitmapText(loScore, this._headlineStyle)
     this.addChild(this._loScoreText)
 
     this._loScoreText.position.x = canvasSize.x - 35 - this._loScoreText.textWidth
