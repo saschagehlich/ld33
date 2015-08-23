@@ -14,11 +14,47 @@ export default class Hero extends Mob {
 
     this._isAttackable = true
     this._canAttack = false
+
+    this._walkingMode = 'gold'
+    this._escapeRadius = 5
+  }
+
+  update (delta) {
+    this._monstersInRange = this._findMonstersInRange()
+    this._updateWalkingMode()
+
+    super.update()
+  }
+
+  _updateWalkingMode () {
+    if (this._monstersInRange.length && !this.canAttack) {
+      this._walkingMode = 'escape'
+    } else if (this.canAttack) {
+      this._walkingMode = 'fight'
+    } else {
+      this._walkingMode = 'gold'
+    }
+  }
+
+  _findMonstersInRange () {
+    const currentPosition = this._position.clone().floor()
+    const { monsters } = this._game
+
+    const monstersAndRanges = monsters.map((monster) => {
+      const distVector = monster.position.clone()
+        .subtract(currentPosition).abs()
+      const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
+      return [monster, dist]
+    }).sort((a, b) => a[1] - b[1])
+
+    const monstersInRange = monstersAndRanges.filter(([monster, dist]) => {
+      return dist < this._escapeRadius
+    }).map(([monster, dist]) => monster)
+
+    return monstersInRange
   }
 
   _findDestinationPosition () {
-    const currentPosition = this._position.clone().floor()
-
     if (this._path) {
       if (!this._path.length) {
         this._path = null
@@ -34,6 +70,66 @@ export default class Hero extends Mob {
         return
       }
     }
+
+    switch (this._walkingMode) {
+      case 'gold':
+        this._lookForGold()
+        break
+      case 'escape':
+        this._escapeFromMonsters()
+        break
+      case 'fight':
+        this._lookForMonsters()
+        break
+    }
+  }
+
+  _escapeFromMonsters () {
+    const currentPosition = this._position.clone().floor()
+
+    // Find closest monster
+    const closestMonster = this._monstersInRange[0]
+
+    const distVector = closestMonster.position.clone()
+      .subtract(currentPosition)
+
+    let monsterDirections = []
+
+    // Monster is on top
+    if (distVector.y < 0) {
+      monsterDirections.push(0)
+    }
+    // Monster is to the left
+    if (distVector.x < 0) {
+      monsterDirections.push(3)
+    }
+    // Monster is to the right
+    if (distVector.x > 0) {
+      monsterDirections.push(1)
+    }
+    // Monster is to the bottom
+    if (distVector.y > 0) {
+      monsterDirections.push(2)
+    }
+
+    const preferredDirections = [0, 1, 2, 3].filter((direction) => monsterDirections.indexOf(direction) === -1)
+    const walkableNeighbors = preferredDirections.map((direction) => {
+      return [direction, this._map.getWalkablePositionWithDirection(currentPosition, direction)]
+    }).filter(([direction, position]) => {
+      return !!position
+    })
+
+    if (!walkableNeighbors.length) {
+      // Fallback: Look for gold
+      return this._lookForGold()
+    }
+
+    const [direction, position] = _.sample(walkableNeighbors)
+    this._walkTo(position, direction)
+  }
+
+  _lookForGold () {
+    const currentPosition = this._position.clone().floor()
 
     const directions = {
       straight: this._direction,
@@ -79,5 +175,9 @@ export default class Hero extends Mob {
     } else {
       this._walkTo(destinationPosition, directions[newDirection])
     }
+  }
+
+  stopWalking () {
+    // Override default, never stop running
   }
 }
