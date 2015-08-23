@@ -1,4 +1,4 @@
-/* global PIXI, _ */
+/* global PIXI, Howler, _ */
 
 import Keyboard from '../keyboard.js'
 import Constants from '../constants'
@@ -52,6 +52,10 @@ export default class Game extends PIXI.Container {
     this._keyboard.on('pressed', this._onKeyPressed.bind(this))
   }
 
+  playSound (sound) {
+    this._app.sound.play(sound)
+  }
+
   _onKeyPressed (key) {
     if (key === 'SHIFT') {
       this._switchControlledMonster()
@@ -59,12 +63,16 @@ export default class Game extends PIXI.Container {
   }
 
   _switchControlledMonster () {
+    const newMonster = this._monsters[(this._controlledMonsterIndex + 1) % this._monsters.length]
+    this.switchToMonster(newMonster)
+  }
+
+  switchToMonster (monster) {
     const currentMonster = this._monsters[this._controlledMonsterIndex]
     currentMonster.controlledByUser = false
 
-    this._controlledMonsterIndex = (this._controlledMonsterIndex + 1) % this._monsters.length
-    const newMonster = this._monsters[this._controlledMonsterIndex]
-    newMonster.controlledByUser = true
+    this._controlledMonsterIndex = this._monsters.indexOf(monster)
+    monster.controlledByUser = true
   }
 
   _createEntities () {
@@ -196,6 +204,22 @@ export default class Game extends PIXI.Container {
       this._fartActors = _.difference(this._fartActors, deletedFartActors)
       deletedFartActors.forEach((actor) => this.removeChild(actor))
     }
+
+    const consumableEntities = this._entities.filter((entity) => !entity.consumed)
+    if (!consumableEntities.length) {
+      this.gameOver(false, 'The hero was able to collect all the gold')
+    }
+  }
+
+  getNextAliveMonster () {
+    const aliveMonsters = this._monsters.filter((monster) => monster.isAlive)
+    if (!aliveMonsters.length) { return null }
+
+    return _.sample(aliveMonsters)
+  }
+
+  gameOver () {
+    throw new Error('Game Over')
   }
 
   render (renderer) {
@@ -232,11 +256,15 @@ export default class Game extends PIXI.Container {
     this._bottleActive = false
 
     this._monsters.forEach((monster) => {
-      monster.canAttack = true
-      monster.isAttackable = false
+      monster.canAttack = monster.controlledByUser
+      monster.isAttackable = !monster.canAttack
     })
     this._hero.canAttack = false
     this._hero.isAttackable = true
+  }
+
+  isHeroAttackable () {
+    return this._hero.isAttackable
   }
 
   get monsters () {

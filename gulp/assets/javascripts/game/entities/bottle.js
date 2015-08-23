@@ -12,4 +12,5 @@ export default class Bottle extends Entity {
   }
 
   get consumed () { return this._consumed }
+  set consumed (consumed) { this._consumed = consumed }
 }

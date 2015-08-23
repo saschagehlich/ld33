@@ -7,8 +7,9 @@ import Vector2 from '../../math/vector2'
 const FART_COOLDOWN = 5000
 
 export default class Hero extends Mob {
-  constructor (...args) {
-    super(...args)
+  constructor (game, map, spawn, dumb = false) {
+    super(game, map, spawn)
+    this._dumb = dumb
 
     this._canConsume = [Gold, Bottle]
 
@@ -21,6 +22,7 @@ export default class Hero extends Mob {
 
     const now = window.performance.now()
     this._lastFartAt = now
+    this._attackedMobs = 0
   }
 
   consumeEntity (entity) {
@@ -28,14 +30,19 @@ export default class Hero extends Mob {
 
     if (entity instanceof Gold) {
       this._points += 10
+      this._game.playSound('coin')
     }
     if (entity instanceof Bottle) {
       this._points += 100
       this._game.bottleActive()
+      this._game.playSound('gulg')
     }
   }
 
   update (delta) {
+    if (this._dumb) {
+      return
+    }
     this._monstersInRange = this._findMonstersInRange()
     this._updateWalkingMode()
 
@@ -209,6 +216,8 @@ export default class Hero extends Mob {
 
     const now = window.performance.now()
     this._lastFartAt = now
+
+    this._game.playSound('fart2')
   }
 
   stopWalking () {
@@ -217,6 +226,17 @@ export default class Hero extends Mob {
 
   isAttackableBy (mob) {
     return this._isAttackable && mob.constructor.name === 'Monster'
+  }
+
+  _attack (mob) {
+    super._attack(mob)
+    this._attackedMobs++
+    this._points += Math.pow(2, this._attackedMobs) * 100
+  }
+
+  attackedBy (mob) {
+    super.attackedBy(mob)
+    this._game.gameOver(true, 'You killed the hero!')
   }
 
   get points () { return this._points }

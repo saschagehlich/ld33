@@ -8,3 +8,6 @@ _.invert = require('lodash/object/invert')
 _.without = require('lodash/array/without')
 _.difference = require('lodash/array/difference')
 window._ = _
+
+import { Howler } from 'howler'
+window.Howler = Howler

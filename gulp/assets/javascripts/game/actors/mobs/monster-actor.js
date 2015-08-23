@@ -59,11 +59,16 @@ export default class MonsterActor extends MobActor {
     this.position.x = position.x
     this.position.y = position.y - 10
 
-    if (this._object.isAlive) {
+    this.visible = this._object.isAlive
+    if (this.visible) {
       this._updateSprite(delta)
-    } else {
-      this._updateDeadSprite(delta)
     }
+
+    // if (this._object.isAlive) {
+    //   this._updateSprite(delta)
+    // } else {
+    //   this._updateDeadSprite(delta)
+    // }
   }
 
   _updateDeadSprite (delta) {

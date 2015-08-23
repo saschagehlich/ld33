@@ -37,6 +37,12 @@ module.exports = {
     dest: publicAssets + '/images'
   },
 
+  // Source and destination paths for audio files
+  audio: {
+    src: sourceFiles + '/audio/**',
+    dest: publicAssets + '/audio'
+  },
+
   // Source and destination paths for javascripts
   js: {
     src: sourceFiles + '/javascripts/*.js',

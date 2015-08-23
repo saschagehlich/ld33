@@ -1,7 +1,8 @@
-/* global PIXI */
+/* global PIXI, Howl */
 
 import Stats from 'stats.js'
 import GameScene from './scenes/game-scene'
+import MenuScene from './scenes/menu-scene'
 import Vector2 from './math/vector2'
 import Constants from './constants'
 
@@ -9,6 +10,20 @@ export default class Application {
   constructor (canvas) {
     this._canvas = canvas
     this._scene = null
+
+    this._sound = new Howl({
+      urls: ['/assets/audio/sound.mp3'],
+      sprite: {
+        ambient: [0, 17450, true],
+        coin: [17450, 2180],
+        dead: [17450 + 2180, 2180],
+        fart1: [17450 + 2180 * 2, 2180],
+        fart2: [17450 + 2180 * 3, 2180],
+        gulg: [17450 + 2180 * 4, 2180]
+      }
+    })
+
+    this._sound.play('ambient')
 
     this._renderer = PIXI.autoDetectRenderer(
       Constants.GAME_WIDTH,
@@ -25,6 +40,8 @@ export default class Application {
     this._loader.add('map', '/assets/images/map.png')
     this._loader.add('font-normal-16', '/assets/images/fonts/font-normal-16.fnt')
     this._loader.add('font-normal-16-sprite', '/assets/images/fonts/font-normal-16.png')
+    this._loader.add('font-normal-8', '/assets/images/fonts/font-normal-8.fnt')
+    this._loader.add('font-normal-8-sprite', '/assets/images/fonts/font-normal-8.png')
     this._loader.once('complete', this._onAssetsLoaded.bind(this))
     this._loader.load()
 
@@ -46,7 +63,7 @@ export default class Application {
 
   _onAssetsLoaded (loader, resources) {
     this._resources = resources
-    this.setScene(GameScene)
+    this.setScene(MenuScene)
     this.run()
   }
 
@@ -91,9 +108,15 @@ export default class Application {
     this._scene = new Scene(this)
   }
 
+  startGame (multiplayer = false) {
+    this._scene.dispose()
+    this._scene = new GameScene(this, multiplayer)
+  }
+
   get canvasSize () { return new Vector2(this._canvas.width, this._canvas.height) }
   get renderer () { return this._renderer }
   get resources () { return this._resources }
+  get sound () { return this._sound }
 };
 
 (() => {

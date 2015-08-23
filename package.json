@@ -29,6 +29,7 @@
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.2.4",
     "gulp-webpack": "^1.5.0",
+    "howler": "^1.1.26",
     "json-loader": "^0.5.2",
     "lodash": "^3.10.1",
     "pathfinding": "^0.4.17",

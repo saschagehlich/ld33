@@ -1,8 +1,8 @@
 /* global PIXI */
 export default class Scene extends PIXI.Container {
-  constructor (game) {
+  constructor (app) {
     super()
-    this._app = game
+    this._app = app
   }
 
   update (delta) {
@@ -11,5 +11,9 @@ export default class Scene extends PIXI.Container {
 
   render (renderer) {
     renderer.render(this)
+  }
+
+  dispose () {
+    throw new Error(this.constructor.name + '#dispose not implemented')
   }
 }

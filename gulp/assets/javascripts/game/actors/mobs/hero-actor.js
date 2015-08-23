@@ -11,7 +11,7 @@ export default class PacmanActor extends MobActor {
     super(...args)
 
     this._lastSpriteDirection = 'back'
-    this._animationFrame = Math.floor(Math.random() * 4)
+    this._animationFrame = 0
     this._animationCounter = Math.random() * ANIMATION_INTERVAL
 
     this._textures = {
@@ -39,6 +39,12 @@ export default class PacmanActor extends MobActor {
         PIXI.Texture.fromFrame('mobs/hero/front-0.png'),
         PIXI.Texture.fromFrame('mobs/hero/front-2.png')
       ]
+    }
+
+    for (let direction in this._textures) {
+      this._textures[direction].forEach((texture) => {
+        texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
+      })
     }
 
     this._sprite = PIXI.Sprite.fromFrame('mobs/hero/back-0.png')
