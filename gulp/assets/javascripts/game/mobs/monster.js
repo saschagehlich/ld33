@@ -39,4 +39,9 @@ export default class Monster extends Mob {
       this._preferredDirection = 0
     }
   }
+
+  isAttackableBy (mob) {
+    return this._isAlive && ((this._isAttackable && mob.constructor.name === 'Hero') ||
+      (mob.constructor.name === 'Fart'))
+  }
 }

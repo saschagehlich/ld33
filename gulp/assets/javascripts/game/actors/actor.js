@@ -16,4 +16,6 @@ export default class Actor extends PIXI.Container {
   render (renderer) {
 
   }
+
+  get object () { return this._object }
 }

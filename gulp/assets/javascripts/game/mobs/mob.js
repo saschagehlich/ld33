@@ -13,7 +13,7 @@ export default class Mob {
 
     this._isAlive = true
     this.consumableRadius = 0.5
-    this.attackableRadius = 1.0
+    this.attackableRadius = 0.5
     this._position = new Vector2(0, 0)
     this._canConsume = []
 
@@ -223,10 +223,14 @@ export default class Mob {
 
     const touchedMobs = this._game.getTouchedMobsForMob(this)
     touchedMobs.forEach((mob) => {
-
-      if (!mob.isAttackable) return
-      this._attack(mob)
+      if (mob.isAttackableBy(this)) {
+        this._attack(mob)
+      }
     })
+  }
+
+  isAttackableBy (mob) {
+    return false
   }
 
   _attack (mob) {

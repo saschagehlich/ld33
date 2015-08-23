@@ -6,7 +6,7 @@ import Vector2 from '../../../math/vector2'
 
 const ANIMATION_INTERVAL = 0.15
 
-export default class GhostActor extends MobActor {
+export default class MonsterActor extends MobActor {
   constructor (...args) {
     super(...args)
 

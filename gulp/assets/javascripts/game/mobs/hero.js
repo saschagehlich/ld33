@@ -4,6 +4,8 @@ import Gold from '../entities/gold'
 import Bottle from '../entities/bottle'
 import Vector2 from '../../math/vector2'
 
+const FART_COOLDOWN = 5000
+
 export default class Hero extends Mob {
   constructor (...args) {
     super(...args)
@@ -16,6 +18,9 @@ export default class Hero extends Mob {
     this._walkingMode = 'gold'
     this._escapeRadius = 5
     this._points = 0
+
+    const now = window.performance.now()
+    this._lastFartAt = now
   }
 
   consumeEntity (entity) {
@@ -33,10 +38,6 @@ export default class Hero extends Mob {
   update (delta) {
     this._monstersInRange = this._findMonstersInRange()
     this._updateWalkingMode()
-
-    if (Math.floor(Math.random() * 100) === 0) {
-      this._fart()
-    }
 
     super.update()
   }
@@ -100,6 +101,7 @@ export default class Hero extends Mob {
   }
 
   _escapeFromMonsters () {
+    const now = window.performance.now()
     const currentPosition = this._position.clone().floor()
 
     // Find closest monster
@@ -137,6 +139,10 @@ export default class Hero extends Mob {
     if (!walkableNeighbors.length) {
       // Fallback: Look for gold
       return this._lookForGold()
+    }
+
+    if (now - this._lastFartAt >= FART_COOLDOWN) {
+      this._fart()
     }
 
     const [direction, position] = _.sample(walkableNeighbors)
@@ -200,10 +206,17 @@ export default class Hero extends Mob {
   _fart () {
     const currentPosition = this._position.clone().floor()
     this._game.spawnFartAt(currentPosition)
+
+    const now = window.performance.now()
+    this._lastFartAt = now
   }
 
   stopWalking () {
     // Override default, never stop running
+  }
+
+  isAttackableBy (mob) {
+    return this._isAttackable && mob.constructor.name === 'Monster'
   }
 
   get points () { return this._points }

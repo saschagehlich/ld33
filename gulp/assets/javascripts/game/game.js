@@ -1,4 +1,4 @@
-/* global PIXI */
+/* global PIXI, _ */
 
 import Keyboard from '../keyboard.js'
 import Constants from '../constants'
@@ -36,6 +36,7 @@ export default class Game extends PIXI.Container {
     this._controlledMonsterIndex = 0
 
     this._actors = []
+    this._fartActors = []
     this._mobs = []
     this._monsters = []
     this._farts = []
@@ -185,6 +186,16 @@ export default class Game extends PIXI.Container {
     if (this._bottleActive && (now - this._bottleActiveSince) >= Constants.BOTTLE_DURATION) {
       this.bottleInactive()
     }
+
+    const deletedFartActors = this._fartActors.filter((actor) => actor.object.deleted)
+    if (deletedFartActors.length) {
+      const deletedFarts = deletedFartActors.map((actor) => actor.object)
+      this._actors = _.difference(this._actors, deletedFartActors)
+      this._farts = _.difference(this._farts, deletedFarts)
+      this._mobs = _.difference(this._mobs, deletedFarts)
+      this._fartActors = _.difference(this._fartActors, deletedFartActors)
+      deletedFartActors.forEach((actor) => this.removeChild(actor))
+    }
   }
 
   render (renderer) {
@@ -212,6 +223,7 @@ export default class Game extends PIXI.Container {
 
     const fartActor = new FartActor(this, fart)
     this._actors.push(fartActor)
+    this._fartActors.push(fartActor)
 
     this.addChild(fartActor)
   }
