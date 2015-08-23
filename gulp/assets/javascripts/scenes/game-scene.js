@@ -3,9 +3,9 @@ import Game from '../game/game'
 import Vector2 from '../math/vector2'
 
 export default class GameScene extends Scene {
-  constructor (app, multiplayer) {
+  constructor (app) {
     super(app)
-    this._game = new Game(this._app, multiplayer)
+    this._game = new Game(this._app, this._app.multiplayer)
     this.addChild(this._game)
   }
 

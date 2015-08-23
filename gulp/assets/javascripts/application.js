@@ -114,17 +114,21 @@ export default class Application {
 
     if (withIntro && !this._introPlayed) {
       this._introPlayed = true
+      this._multiplayer = multiplayer
       Scene = IntroScene
+    } else if (!withIntro) {
+      this._multiplayer = multiplayer
     }
 
     this._scene.dispose()
-    this._scene = new Scene(this, multiplayer)
+    this._scene = new Scene(this)
   }
 
   get canvasSize () { return new Vector2(this._canvas.width, this._canvas.height) }
   get renderer () { return this._renderer }
   get resources () { return this._resources }
   get sound () { return this._sound }
+  get multiplayer () { return this._multiplayer }
 };
 
 (() => {
