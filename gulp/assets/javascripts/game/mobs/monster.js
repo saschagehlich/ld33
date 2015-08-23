@@ -6,6 +6,29 @@ export default class Monster extends Mob {
 
     this._isAttackable = true
     this._canAttack = false
+
+    this._onKeyPressed = this._onKeyPressed.bind(this)
+  }
+
+  _onKeyPressed (id, key, e) {
+    switch (key) {
+      case 'UP':
+        this._preferredDirection = 0
+        this._walking = true
+        break
+      case 'RIGHT':
+        this._preferredDirection = 1
+        this._walking = true
+        break
+      case 'DOWN':
+        this._preferredDirection = 2
+        this._walking = true
+        break
+      case 'LEFT':
+        this._preferredDirection = 3
+        this._walking = true
+        break
+    }
   }
 
   update (delta) {
@@ -24,8 +47,8 @@ export default class Monster extends Mob {
     const nextMonster = this._game.getNextAliveMonster()
     if (!nextMonster) {
       this._game.gameOver(false, 'All your monsters died!')
-    } else {
-      this._game.switchToMonster(nextMonster)
+    } else if (this._controlledByUser) {
+      this._game.switchToMonster(nextMonster, this._controlledByUser.id)
     }
   }
 
@@ -56,18 +79,24 @@ export default class Monster extends Mob {
       (mob.constructor.name === 'Fart'))
   }
 
-  set controlledByUser (controlledByUser) {
-    this._controlledByUser = controlledByUser
-    if (controlledByUser) {
+  set controlledByUser (user) {
+    if (user) {
       this._isAttackable = !this._game.isHeroAttackable()
       this._canAttack = !this._isAttackable
       this._preferredDirection = this._direction
+
+      user.on('keypressed', this._onKeyPressed)
     } else {
       this._isAttackable = true
       this._canAttack = false
       this._preferredDirection = null
       this._walking = true
+
+      if (this._controlledByUser) {
+        this._controlledByUser.removeListener('keypressed', this._onKeyPressed)
+      }
     }
+    this._controlledByUser = user
   }
   get controlledByUser () { return this._controlledByUser }
 }

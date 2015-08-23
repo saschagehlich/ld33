@@ -17,7 +17,7 @@ export default class Hero extends Mob {
     this._canAttack = false
 
     this._walkingMode = 'gold'
-    this._escapeRadius = 5
+    this._escapeRadius = 7
     this._points = 0
 
     const now = window.performance.now()

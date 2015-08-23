@@ -1,15 +1,11 @@
 /* global _ */
 import Vector2 from '../../math/vector2'
-import Keyboard from '../../keyboard'
 
 export default class Mob {
   constructor (game, map, spawn) {
     this._game = game
     this._map = map
     this._spawn = spawn
-
-    this._keyboard = new Keyboard()
-    this._keyboard.on('pressed', this._onKeyPressed.bind(this))
 
     this._isAlive = true
     this.consumableRadius = 0.5
@@ -31,29 +27,6 @@ export default class Mob {
     this._canAttack = false
 
     this.destination = null
-  }
-
-  _onKeyPressed (key) {
-    if (!this._controlledByUser) return
-
-    switch (key) {
-      case 'UP':
-        this._preferredDirection = 0
-        this._walking = true
-        break
-      case 'RIGHT':
-        this._preferredDirection = 1
-        this._walking = true
-        break
-      case 'DOWN':
-        this._preferredDirection = 2
-        this._walking = true
-        break
-      case 'LEFT':
-        this._preferredDirection = 3
-        this._walking = true
-        break
-    }
   }
 
   setPosition (position) {

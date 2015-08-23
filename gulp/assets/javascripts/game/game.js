@@ -3,6 +3,7 @@
 import Keyboard from '../keyboard.js'
 import Constants from '../constants'
 
+import Player from './player'
 import Map from './map'
 import UI from './ui'
 import GameOver from './game-over'
@@ -30,8 +31,19 @@ const MONSTER_COLORS = [
 ]
 
 export default class Game extends PIXI.Container {
-  constructor (app) {
+  constructor (app, multiplayer = false) {
     super()
+    this._onKeyPressed = this._onKeyPressed.bind(this)
+
+    this._multiplayer = multiplayer
+    this._players = []
+    this._players.push(new Player(this, 0))
+    if (this._multiplayer) {
+      this._players.push(new Player(this, 1))
+    }
+    this._players.forEach((player) => {
+      player.on('keypressed', this._onKeyPressed)
+    })
 
     this._app = app
     this._map = new Map(this._app)
@@ -61,7 +73,6 @@ export default class Game extends PIXI.Container {
     this._spawnHero()
     this._spawnMonsters()
 
-    this._onKeyPressed = this._onKeyPressed.bind(this)
     this._keyboard.on('pressed', this._onKeyPressed)
 
     this._initUI()
@@ -76,9 +87,9 @@ export default class Game extends PIXI.Container {
     this._app.sound.play(sound)
   }
 
-  _onKeyPressed (key, e) {
+  _onKeyPressed (playerId, key, e) {
     if (key === 'SHIFT') {
-      this._switchControlledMonster()
+      this._switchControlledMonster(playerId)
     }
 
     if (key === 'SPACE' && this._gameOver) {
@@ -87,17 +98,19 @@ export default class Game extends PIXI.Container {
     }
   }
 
-  _switchControlledMonster () {
-    const newMonster = this._monsters[(this._controlledMonsterIndex + 1) % this._monsters.length]
-    this.switchToMonster(newMonster)
+  _switchControlledMonster (playerId) {
+    const player = this._players[playerId]
+    const newMonster = this._monsters[(player.controlledMonsterIndex + 1) % this._monsters.length]
+    this.switchToMonster(newMonster, playerId)
   }
 
-  switchToMonster (monster) {
-    const currentMonster = this._monsters[this._controlledMonsterIndex]
-    currentMonster.controlledByUser = false
+  switchToMonster (monster, playerId) {
+    const player = this._players[playerId]
+    const currentMonster = this._monsters[player.controlledMonsterIndex]
+    currentMonster.controlledByUser = null
 
-    this._controlledMonsterIndex = this._monsters.indexOf(monster)
-    monster.controlledByUser = true
+    player.controlledMonsterIndex = this._monsters.indexOf(monster)
+    monster.controlledByUser = this._players[playerId]
   }
 
   _createEntities () {
@@ -172,9 +185,12 @@ export default class Game extends PIXI.Container {
       const monster = new Monster(this, this._map, position)
       monster.setPosition(position)
 
-      if (i === this._controlledMonsterIndex) {
-        monster.controlledByUser = true
-      }
+      this._players.forEach((player, playerId) => {
+        if (i === playerId) {
+          monster.controlledByUser = player
+          player.controlledMonsterIndex = i
+        }
+      })
 
       const tint = MONSTER_COLORS[i]
       const actor = new MonsterActor(this, monster, tint)
@@ -231,7 +247,7 @@ export default class Game extends PIXI.Container {
       this._farts = _.difference(this._farts, deletedFarts)
       this._mobs = _.difference(this._mobs, deletedFarts)
       this._fartActors = _.difference(this._fartActors, deletedFartActors)
-      deletedFartActors.forEach((actor) => this.removeChild(actor))
+      deletedFartActors.forEach((actor) => this._container.removeChild(actor))
     }
 
     const consumableEntities = this._entities.filter((entity) => !entity.consumed)
