@@ -285,13 +285,15 @@ export default class Game extends PIXI.Container {
     this._gameOver = new GameOver(this, this._app, win, reason)
     this.addChild(this._gameOver)
 
-    let loScore = window.localStorage.getItem('score')
-    if (loScore === null) {
-      window.localStorage.setItem('score', this._hero.points)
-    } else {
-      loScore = parseInt(loScore, 10)
-      if (this._hero.points < loScore) {
+    if (win) {
+      let loScore = window.localStorage.getItem('score')
+      if (loScore === null) {
         window.localStorage.setItem('score', this._hero.points)
+      } else {
+        loScore = parseInt(loScore, 10)
+        if (this._hero.points < loScore) {
+          window.localStorage.setItem('score', this._hero.points)
+        }
       }
     }
   }

@@ -45,7 +45,16 @@ export default class GameOver extends PIXI.Container {
         font: '32px font-normal-16',
         align: 'center'
       }
-      this._pointsText = new PIXI.extras.BitmapText(`Sir Pantless collected ${this._game.hero.points} gold\nbefore you catched him.\n\nThats too much... right?\nTry again!`, pointsStyle)
+
+      let loScore = window.localStorage.getItem('score')
+      let subText
+      if (loScore === null || parseInt(loScore, 10) > this._game.hero.points) {
+        subText = 'That\'s your new lo-score!\nGood Job!'
+      } else {
+        subText = 'That\'s too much... right?\nTry again!'
+      }
+
+      this._pointsText = new PIXI.extras.BitmapText(`Sir Pantless collected ${this._game.hero.points} gold\nbefore you catched him.\n\n${subText}`, pointsStyle)
       this._pointsText.position.x = canvasSize.x / 2 - this._pointsText.textWidth / 2
       this._pointsText.position.y = 300
       this._pointsText.tint = Constants.PRIMARY_COLOR_RED
