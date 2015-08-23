@@ -2,6 +2,7 @@
 
 import Vector2 from '../math/vector2'
 import Constants from '../constants'
+import Pathfinding from 'pathfinding'
 
 export default class Map extends PIXI.Container {
   constructor (game) {
@@ -24,6 +25,14 @@ export default class Map extends PIXI.Container {
     this._monsterSpawns = []
 
     this._map = this._readMapData()
+    this._pfGrid = new Pathfinding.Grid(this._map)
+    this._pfFinder = new Pathfinding.BestFirstFinder()
+  }
+
+  findPath (from, to) {
+    const grid = this._pfGrid.clone()
+    const path = this._pfFinder.findPath(from.x, from.y, to.x, to.y, grid)
+    return path
   }
 
   getRandomHeroSpawn () {

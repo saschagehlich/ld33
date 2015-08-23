@@ -33,7 +33,7 @@ export default class BottleActor extends EntityActor {
       .add(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2)
 
     this.position.x = position.x
-    this.position.y = position.y + 8
+    this.position.y = position.y + 4
 
     this._sprite.visible = !this._object.consumed
 

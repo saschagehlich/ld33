@@ -5,7 +5,7 @@ export default class Entity {
     this._game = game
     this._position = new Vector2()
 
-    this.touchableRadius = 0.3
+    this.consumableRadius = 0.3
   }
 
   setPosition (position) {

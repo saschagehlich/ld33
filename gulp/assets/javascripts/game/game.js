@@ -22,7 +22,7 @@ export default class Game extends PIXI.Container {
     this._map = map
     this._keyboard = new Keyboard()
 
-    this._controlledGhostIndex = 0
+    this._controlledMonsterIndex = 0
 
     this._actors = []
     this._mobs = []
@@ -85,7 +85,7 @@ export default class Game extends PIXI.Container {
     const spawns = this._map.monsterSpawns
 
     spawns.forEach((position, i) => {
-      const monster = new Monster(this, this._map)
+      const monster = new Monster(this, this._map, position)
       monster.setPosition(position)
 
       if (i === this._controlledMonsterIndex) {
@@ -103,7 +103,7 @@ export default class Game extends PIXI.Container {
   _spawnHero () {
     const spawn = this._map.getRandomHeroSpawn()
 
-    this._hero = new Hero(this, this._map)
+    this._hero = new Hero(this, this._map, spawn)
     this._hero.setPosition(spawn)
 
     const actor = new HeroActor(this, this._hero)
@@ -116,6 +116,13 @@ export default class Game extends PIXI.Container {
     return this._entities.filter((entity) =>
       mob.touchesEntity(entity)
     )
+  }
+
+  getTouchedMobsForMob (mob) {
+    return this._mobs.filter((_mob) => mob !== _mob)
+      .filter((_mob) => {
+        return _mob.touchesMob(mob)
+      })
   }
 
   update (delta) {

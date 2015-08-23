@@ -10,6 +10,7 @@ export default class Hero extends Mob {
     this._maxSpeed = 5
     this._speed = 5
 
-    this.isAttackable = true
+    this._isAttackable = true
+    this._canAttack = false
   }
 }

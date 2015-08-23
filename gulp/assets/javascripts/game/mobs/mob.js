@@ -3,18 +3,21 @@ import Vector2 from '../../math/vector2'
 import Keyboard from '../../keyboard'
 
 export default class Mob {
-  constructor (game, map) {
+  constructor (game, map, spawn) {
     this._game = game
     this._map = map
+    this._spawn = spawn
 
     this._keyboard = new Keyboard()
     this._keyboard.on('pressed', this._onKeyPressed.bind(this))
 
-    this._consumableRadius = 0.5
-    this._touchableRadius = 1.5
+    this._isAlive = true
+    this.consumableRadius = 0.5
+    this.attackableRadius = 1.0
     this._position = new Vector2(0, 0)
     this._canConsume = []
 
+    this._walking = true
     this._maxSpeed = 5
     this._speed = 5
     this._direction = 0
@@ -24,24 +27,34 @@ export default class Mob {
     this._controlledByUser = false
     this._preferredDirection = null
 
-    this.isAttackable = false
+    this._isAttackable = false
+    this._canAttack = false
+
+    this.destination = null
   }
 
   _onKeyPressed (key) {
-    if (!this.controlledByUser) return
+    if (!this._controlledByUser) return
 
     switch (key) {
       case 'UP':
         this._preferredDirection = 0
+        this._walking = true
         break
       case 'RIGHT':
         this._preferredDirection = 1
+        this._walking = true
         break
       case 'DOWN':
         this._preferredDirection = 2
+        this._walking = true
         break
       case 'LEFT':
         this._preferredDirection = 3
+        this._walking = true
+        break
+      case 'ESC':
+        this.die()
         break
     }
   }
@@ -57,13 +70,35 @@ export default class Mob {
 
   update (delta) {
     this._checkTouchedEntities()
+    this._checkTouchedMobs()
     if (!this._destinationPosition) {
       this._findDestinationPosition()
     }
     this._updatePathfinding()
+
+    if (!this._destinationPosition) {
+      this._onDestinationReached()
+      if (!this._destinationPosition) {
+        this.stopWalking()
+      }
+    }
   }
 
   _findDestinationPosition () {
+    if (!this._walking) { return }
+
+    if (this._path) {
+      if (!this._path.length) {
+        this._path = null
+        this._onPathfindingEnded()
+      } else {
+        const [x, y] = this._path[0]
+        this._walkTo(new Vector2(x, y))
+        this._path = this._path.slice(1)
+        return
+      }
+    }
+
     const currentPosition = this._position.clone().floor()
     const onlyStraight = this._controlledByUser
 
@@ -102,7 +137,6 @@ export default class Mob {
 
     // No destination - just stay
     if (!destinationPosition) {
-      this._walkTo(currentPosition, this._direction)
       return
     }
 
@@ -124,6 +158,9 @@ export default class Mob {
   }
 
   _updatePathfinding () {
+    if (!this._walking) { return }
+    if (!this._destinationPosition) { return }
+
     const progress = (window.performance.now() - this._walkStartTime) / this._walkDuration
     const distVector = this._destinationPosition.clone()
       .subtract(this._startPosition)
@@ -138,7 +175,7 @@ export default class Mob {
   }
 
   _onDestinationReached () {
-    if (!this.controlledByUser) {
+    if (!this._controlledByUser || !this._isAlive) {
       return this._findDestinationPosition()
     }
 
@@ -162,6 +199,22 @@ export default class Mob {
     })
   }
 
+  // Mobs check if they can attack something
+  _checkTouchedMobs () {
+    if (!this.canAttack) return
+
+    const touchedMobs = this._game.getTouchedMobsForMob(this)
+    touchedMobs.forEach((mob) => {
+
+      if (!mob.isAttackable) return
+      this._attack(mob)
+    })
+  }
+
+  _attack (mob) {
+    mob.attackedBy(this)
+  }
+
   _canConsumeEntity (entity) {
     let canConsume = false
     this._canConsume.forEach((klass) => {
@@ -172,6 +225,13 @@ export default class Mob {
     return canConsume
   }
 
+  _findPathTo (position) {
+    const currentPosition = this._position.clone().floor()
+    const path = this._map.findPath(currentPosition, position)
+    this._path = path
+    this._destinationPosition = null
+  }
+
   touchesEntity (entity) {
     const distVector = this._position.clone()
       .subtract(entity.position)
@@ -179,7 +239,35 @@ export default class Mob {
 
     const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
 
-    return dist < this._consumableRadius + entity.touchableRadius
+    return dist < this.consumableRadius + entity.consumableRadius
+  }
+
+  touchesMob (mob) {
+    const distVector = this._position.clone()
+      .subtract(mob.position)
+      .abs()
+
+    const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
+
+    return dist < this.attackableRadius + mob.attackableRadius
+  }
+
+  attackedBy (mob) {
+    this.die()
+  }
+
+  die () {
+    this._isAlive = false
+  }
+
+  stopWalking () {
+    this._walking = false
+  }
+
+  _onPathfindingEnded () {
+    this._destinationPosition = null
+    this._path = null
+    this._destination = null
   }
 
   get position () { return this._position }
@@ -189,9 +277,17 @@ export default class Mob {
     this._controlledByUser = controlledByUser
     if (!controlledByUser) {
       this._preferredDirection = null
+      this._walking = true
     } else {
-      console.log('preferring', this._direction)
       this._preferredDirection = this._direction
     }
+  }
+
+  get isAttackable () {
+    return this._isAttackable && this._isAlive
+  }
+
+  get canAttack () {
+    return this._canAttack && this._isAlive
   }
 }
