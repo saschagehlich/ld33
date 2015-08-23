@@ -101,6 +101,10 @@ export default class Game extends PIXI.Container {
     }
   }
 
+  getAliveMonsters () {
+    return this._monsters.filter((monster) => monster.isAlive)
+  }
+
   _switchControlledMonster (playerId) {
     const player = this._players[playerId]
     const currentMonster = this._monsters[player.controlledMonsterIndex]

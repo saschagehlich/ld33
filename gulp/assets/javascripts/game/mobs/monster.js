@@ -46,7 +46,9 @@ export default class Monster extends Mob {
 
     const nextMonster = this._game.getRandomAliveMonster()
     if (!nextMonster) {
-      this._game.gameOver(false, 'All your monsters died!')
+      if (!this._game.getAliveMonsters().length) {
+        this._game.gameOver(false, 'All your monsters died!')
+      }
     } else if (this._controlledByUser) {
       this._game.switchToMonster(nextMonster, this._controlledByUser.id)
     }
