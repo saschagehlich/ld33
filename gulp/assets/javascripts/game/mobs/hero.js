@@ -225,7 +225,7 @@ export default class Hero extends Mob {
     const now = window.performance.now()
     this._lastFartAt = now
 
-    this._game.playSound('fart2')
+    this._game.playSound('fart1')
   }
 
   stopWalking () {

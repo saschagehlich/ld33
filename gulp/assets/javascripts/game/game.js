@@ -103,7 +103,13 @@ export default class Game extends PIXI.Container {
 
   _switchControlledMonster (playerId) {
     const player = this._players[playerId]
-    const newMonster = this._monsters[(player.controlledMonsterIndex + 1) % this._monsters.length]
+    const currentMonster = this._monsters[player.controlledMonsterIndex]
+    const monsters = this._monsters
+      .filter((monster) => monster.controlledByUser === player || !monster.controlledByUser)
+      .filter((monster) => monster.isAlive)
+
+    const monsterIndex = monsters.indexOf(currentMonster)
+    const newMonster = monsters[(monsterIndex + 1) % monsters.length]
     this.switchToMonster(newMonster, playerId)
   }
 
@@ -262,8 +268,10 @@ export default class Game extends PIXI.Container {
     this._map.update(delta)
   }
 
-  getNextAliveMonster () {
-    const aliveMonsters = this._monsters.filter((monster) => monster.isAlive)
+  getRandomAliveMonster () {
+    const aliveMonsters = this._monsters
+      .filter((monster) => monster.isAlive)
+      .filter((monster) => !monster.controlledByUser)
     if (!aliveMonsters.length) { return null }
 
     return _.sample(aliveMonsters)

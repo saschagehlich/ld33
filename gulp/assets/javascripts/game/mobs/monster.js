@@ -44,7 +44,7 @@ export default class Monster extends Mob {
 
     this._game.playSound('dead')
 
-    const nextMonster = this._game.getNextAliveMonster()
+    const nextMonster = this._game.getRandomAliveMonster()
     if (!nextMonster) {
       this._game.gameOver(false, 'All your monsters died!')
     } else if (this._controlledByUser) {
