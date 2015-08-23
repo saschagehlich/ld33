@@ -2,7 +2,7 @@
 
 "entities/bottle-0.png":
 {
-	"frame": {"x":202,"y":60,"w":10,"h":20},
+	"frame": {"x":206,"y":58,"w":10,"h":20},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":12,"w":10,"h":20},
@@ -10,7 +10,7 @@
 },
 "entities/bottle-1.png":
 {
-	"frame": {"x":214,"y":58,"w":10,"h":18},
+	"frame": {"x":218,"y":66,"w":10,"h":18},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":14,"w":10,"h":18},
@@ -18,7 +18,7 @@
 },
 "entities/bottle-2.png":
 {
-	"frame": {"x":166,"y":76,"w":10,"h":16},
+	"frame": {"x":184,"y":76,"w":10,"h":16},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":16,"w":10,"h":16},
@@ -34,7 +34,7 @@
 },
 "entities/gold-1.png":
 {
-	"frame": {"x":178,"y":76,"w":8,"h":14},
+	"frame": {"x":196,"y":76,"w":8,"h":14},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":4,"y":2,"w":8,"h":14},
@@ -42,7 +42,7 @@
 },
 "entities/gold-2.png":
 {
-	"frame": {"x":226,"y":66,"w":8,"h":12},
+	"frame": {"x":230,"y":66,"w":8,"h":12},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":4,"y":4,"w":8,"h":12},
@@ -154,11 +154,19 @@
 },
 "mobs/arrow.png":
 {
-	"frame": {"x":188,"y":76,"w":10,"h":12},
+	"frame": {"x":206,"y":80,"w":10,"h":12},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":10,"h":12},
 	"sourceSize": {"w":10,"h":12}
+},
+"mobs/fart.png":
+{
+	"frame": {"x":168,"y":58,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
 },
 "mobs/hero/back-0.png":
 {
@@ -314,7 +322,7 @@
 },
 "walls/wall.png":
 {
-	"frame": {"x":168,"y":58,"w":16,"h":16},
+	"frame": {"x":166,"y":76,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -327,6 +335,6 @@
 	"format": "RGBA8888",
 	"size": {"w":244,"h":94},
 	"scale": "2",
-	"smartupdate": "$TexturePacker:SmartUpdate:2bc445792c4a26b7096f71ae036bf772:cf13f9fdd874e41c30f6ab23a37e777c:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:30b00170183aecb05fd6fc40454a78f5:2d301d4f8025e079641bdab030a3eec7:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

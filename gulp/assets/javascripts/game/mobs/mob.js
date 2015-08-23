@@ -53,9 +53,6 @@ export default class Mob {
         this._preferredDirection = 3
         this._walking = true
         break
-      case 'ESC':
-        this.die()
-        break
     }
   }
 

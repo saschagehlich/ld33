@@ -15,6 +15,9 @@ import GoldActor from './actors/entities/gold-actor'
 import Bottle from './entities/bottle'
 import BottleActor from './actors/entities/bottle-actor'
 
+import Fart from './mobs/fart'
+import FartActor from './actors/mobs/fart-actor'
+
 const MONSTER_COLORS = [
   0xc60909,
   0x0b9922,
@@ -35,6 +38,7 @@ export default class Game extends PIXI.Container {
     this._actors = []
     this._mobs = []
     this._monsters = []
+    this._farts = []
 
     // TODO rename to consumables
     this._entitiesMap = []
@@ -198,6 +202,18 @@ export default class Game extends PIXI.Container {
     })
     this._hero.canAttack = true
     this._hero.isAttackable = false
+  }
+
+  spawnFartAt (position) {
+    const fart = new Fart(this)
+    fart.setPosition(position.clone())
+    this._farts.push(fart)
+    this._mobs.push(fart)
+
+    const fartActor = new FartActor(this, fart)
+    this._actors.push(fartActor)
+
+    this.addChild(fartActor)
   }
 
   bottleInactive () {

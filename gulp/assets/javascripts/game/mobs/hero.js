@@ -34,6 +34,10 @@ export default class Hero extends Mob {
     this._monstersInRange = this._findMonstersInRange()
     this._updateWalkingMode()
 
+    if (Math.floor(Math.random() * 100) === 0) {
+      this._fart()
+    }
+
     super.update()
   }
 
@@ -191,6 +195,11 @@ export default class Hero extends Mob {
     } else {
       this._walkTo(destinationPosition, directions[newDirection])
     }
+  }
+
+  _fart () {
+    const currentPosition = this._position.clone().floor()
+    this._game.spawnFartAt(currentPosition)
   }
 
   stopWalking () {
