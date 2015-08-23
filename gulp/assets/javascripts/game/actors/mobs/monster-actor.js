@@ -1,4 +1,4 @@
-/* global PIXI, _ */
+/* global PIXI */
 
 import Constants from '../../../constants'
 import MobActor from './mob-actor'
@@ -37,11 +37,11 @@ export default class GhostActor extends MobActor {
 
     this._deadSprites = []
 
-    this._caretSprite = PIXI.Sprite.fromFrame('mobs/caret.png')
-    this._caretSprite.anchor = new Vector2(0.5, 1)
-    this._caretSprite.position.y = -16
-    this._caretSprite.visible = false
-    this.addChild(this._caretSprite)
+    this._arrowSprite = PIXI.Sprite.fromFrame('mobs/arrow.png')
+    this._arrowSprite.anchor = new Vector2(0.5, 1)
+    this._arrowSprite.position.y = -18
+    this._arrowSprite.visible = false
+    this.addChild(this._arrowSprite)
   }
 
   update (delta) {
@@ -52,7 +52,7 @@ export default class GhostActor extends MobActor {
       .multiply(Constants.TILE_SIZE)
       .add(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2)
 
-    this._caretSprite.visible = this._object.controlledByUser
+    this._arrowSprite.visible = this._object.controlledByUser
 
     this.position.x = position.x
     this.position.y = position.y - 6
