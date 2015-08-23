@@ -1,8 +1,9 @@
 /* global PIXI, Howl */
 
 import Stats from 'stats.js'
-import GameScene from './scenes/game-scene'
 import MenuScene from './scenes/menu-scene'
+import IntroScene from './scenes/intro-scene'
+import GameScene from './scenes/game-scene'
 import Vector2 from './math/vector2'
 import Constants from './constants'
 
@@ -108,9 +109,16 @@ export default class Application {
     this._scene = new Scene(this)
   }
 
-  startGame (multiplayer = false) {
+  startGame (withIntro, multiplayer = false) {
+    let Scene = GameScene
+
+    if (withIntro && !this._introPlayed) {
+      this._introPlayed = true
+      Scene = IntroScene
+    }
+
     this._scene.dispose()
-    this._scene = new GameScene(this, multiplayer)
+    this._scene = new Scene(this, multiplayer)
   }
 
   get canvasSize () { return new Vector2(this._canvas.width, this._canvas.height) }

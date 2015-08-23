@@ -56,9 +56,9 @@ export default class MenuScene extends Scene {
 
   _onMenuSelect (option) {
     if (option === 'SINGLEPLAYER') {
-      this._app.startGame()
-    } else if (option === 'MULTIPLAYER') {
       this._app.startGame(true)
+    } else if (option === 'MULTIPLAYER') {
+      this._app.startGame(true, true)
     }
   }
 
