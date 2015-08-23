@@ -84,6 +84,22 @@ export default class Mob {
     }
   }
 
+  _getDirection (from, to) {
+    if (to.y < from.y) {
+      return 0
+    }
+    if (to.x > from.x) {
+      return 1
+    }
+    if (to.y > from.y) {
+      return 2
+    }
+    if (to.x < from.x) {
+      return 3
+    }
+    return this._direction
+  }
+
   _findDestinationPosition () {
     if (!this._walking) { return }
 
@@ -92,8 +108,12 @@ export default class Mob {
         this._path = null
         this._onPathfindingEnded()
       } else {
+        const currentPosition = this._position.clone().floor()
         const [x, y] = this._path[0]
-        this._walkTo(new Vector2(x, y))
+        const newPosition = new Vector2(x, y)
+
+        const direction = this._getDirection(currentPosition, newPosition)
+        this._walkTo(newPosition, direction)
         this._path = this._path.slice(1)
         return
       }
@@ -271,7 +291,9 @@ export default class Mob {
   }
 
   get position () { return this._position }
+  get direction () { return this._direction }
   get controlledByUser () { return this._controlledByUser }
+  get isAlive () { return this._isAlive }
 
   set controlledByUser (controlledByUser) {
     this._controlledByUser = controlledByUser

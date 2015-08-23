@@ -14,6 +14,13 @@ import GoldActor from './actors/entities/gold-actor'
 import Bottle from './entities/bottle'
 import BottleActor from './actors/entities/bottle-actor'
 
+const MONSTER_COLORS = [
+  0xc60909,
+  0x0b9922,
+  0x0b1c99,
+  0x97990b
+]
+
 export default class Game extends PIXI.Container {
   constructor (app, map) {
     super()
@@ -29,6 +36,7 @@ export default class Game extends PIXI.Container {
     this._monsters = []
 
     // TODO rename to consumables
+    this._entitiesMap = []
     this._entities = []
 
     this._createEntities()
@@ -63,7 +71,12 @@ export default class Game extends PIXI.Container {
 
       const goldActor = new GoldActor(this, gold)
 
+      if (!this._entitiesMap[position.y]) {
+        this._entitiesMap[position.y] = []
+      }
+      this._entitiesMap[position.y][position.x] = gold
       this._entities.push(gold)
+
       this.addChild(goldActor)
       this._actors.push(goldActor)
     })
@@ -75,10 +88,42 @@ export default class Game extends PIXI.Container {
 
       const bottleActor = new BottleActor(this, bottle)
 
+      if (!this._entitiesMap[position.y]) {
+        this._entitiesMap[position.y] = []
+      }
+      this._entitiesMap[position.y][position.x] = bottle
       this._entities.push(bottle)
+
       this.addChild(bottleActor)
       this._actors.push(bottleActor)
     })
+  }
+
+  findPathToClosestConsumableEntity (position) {
+    let closestConsumable = null
+    let smallestDist = Infinity
+    this._entities
+      .filter((entity) => !entity.consumed)
+      .forEach((entity) => {
+        const distVector = position.clone()
+          .subtract(entity.position)
+          .abs()
+        const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
+
+        if (dist < smallestDist) {
+          closestConsumable = entity
+          smallestDist = dist
+        }
+      })
+
+    const path = this._map.findPath(position, closestConsumable.position)
+    return path
+  }
+
+  hasConsumableEntityAt (position) {
+    const entity = this._entitiesMap[position.y] && this._entitiesMap[position.y][position.x]
+    if (!entity) return false
+    return !entity.consumed
   }
 
   _spawnMonsters () {
@@ -92,7 +137,8 @@ export default class Game extends PIXI.Container {
         monster.controlledByUser = true
       }
 
-      const actor = new MonsterActor(this, monster)
+      const tint = MONSTER_COLORS[i]
+      const actor = new MonsterActor(this, monster, tint)
       this._mobs.push(monster)
       this._monsters.push(monster)
       this._actors.push(actor)
