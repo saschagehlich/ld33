@@ -1,6 +1,7 @@
 /* global PIXI */
 
 import Keyboard from '../keyboard.js'
+import Constants from '../constants'
 
 import Hero from './mobs/hero'
 import HeroActor from './actors/mobs/hero-actor'
@@ -176,11 +177,38 @@ export default class Game extends PIXI.Container {
     this._entities.forEach((entity) => entity.update(delta))
     this._actors.forEach((actor) => actor.update(delta))
 
-    // this._hero.position.x -= 1 * delta
+    const now = window.performance.now()
+    if (this._bottleActive && (now - this._bottleActiveSince) >= Constants.BOTTLE_DURATION) {
+      this.bottleInactive()
+    }
   }
 
   render (renderer) {
 
+  }
+
+  bottleActive () {
+    const now = window.performance.now()
+    this._bottleActive = true
+    this._bottleActiveSince = now
+
+    this._monsters.forEach((monster) => {
+      monster.canAttack = false
+      monster.isAttackable = true
+    })
+    this._hero.canAttack = true
+    this._hero.isAttackable = false
+  }
+
+  bottleInactive () {
+    this._bottleActive = false
+
+    this._monsters.forEach((monster) => {
+      monster.canAttack = true
+      monster.isAttackable = false
+    })
+    this._hero.canAttack = false
+    this._hero.isAttackable = true
   }
 
   get monsters () {

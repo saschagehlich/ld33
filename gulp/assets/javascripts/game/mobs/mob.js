@@ -309,7 +309,15 @@ export default class Mob {
     return this._isAttackable && this._isAlive
   }
 
+  set isAttackable (isAttackable) {
+    this._isAttackable = isAttackable
+  }
+
   get canAttack () {
     return this._canAttack && this._isAlive
+  }
+
+  set canAttack (canAttack) {
+    return this._canAttack = canAttack
   }
 }

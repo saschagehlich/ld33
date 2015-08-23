@@ -3,5 +3,6 @@ export default {
   GAME_HEIGHT: 600,
   TILE_SIZE: 16,
   MAP_TILES_X: 29,
-  MAP_TILES_Y: 33
+  MAP_TILES_Y: 33,
+  BOTTLE_DURATION: 5000
 }

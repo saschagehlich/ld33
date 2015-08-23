@@ -17,6 +17,19 @@ export default class Hero extends Mob {
 
     this._walkingMode = 'gold'
     this._escapeRadius = 5
+    this._points = 0
+  }
+
+  consumeEntity (entity) {
+    super.consumeEntity(entity)
+
+    if (entity instanceof Gold) {
+      this._points += 10
+    }
+    if (entity instanceof Bottle) {
+      this._points += 100
+      this._game.bottleActive()
+    }
   }
 
   update (delta) {
@@ -30,7 +43,7 @@ export default class Hero extends Mob {
     if (this._monstersInRange.length && !this.canAttack) {
       this._walkingMode = 'escape'
     } else if (this.canAttack) {
-      this._walkingMode = 'fight'
+      this._walkingMode = 'gold'
     } else {
       this._walkingMode = 'gold'
     }
@@ -128,6 +141,11 @@ export default class Hero extends Mob {
     this._walkTo(position, direction)
   }
 
+  _lookForMonsters () {
+    // TODO
+    // Skipping this for now
+  }
+
   _lookForGold () {
     const currentPosition = this._position.clone().floor()
 
@@ -180,4 +198,6 @@ export default class Hero extends Mob {
   stopWalking () {
     // Override default, never stop running
   }
+
+  get points () { return this._points }
 }
