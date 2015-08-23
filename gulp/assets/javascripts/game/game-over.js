@@ -36,9 +36,21 @@ export default class GameOver extends PIXI.Container {
 
     this._reasonText = new PIXI.extras.BitmapText(this._reason.toUpperCase(), style)
     this._reasonText.position.x = canvasSize.x / 2 - this._reasonText.textWidth / 2
-    this._reasonText.position.y = 300
+    this._reasonText.position.y = 200
     this._reasonText.tint = Constants.PRIMARY_COLOR_RED
     this.addChild(this._reasonText)
+
+    if (this._win) {
+      const pointsStyle = {
+        font: '32px font-normal-16',
+        align: 'center'
+      }
+      this._pointsText = new PIXI.extras.BitmapText(`Sir Pantless collected ${this._game.hero.points} gold\nbefore you catched him.\n\nThats too much... right?\nTry again!`, pointsStyle)
+      this._pointsText.position.x = canvasSize.x / 2 - this._pointsText.textWidth / 2
+      this._pointsText.position.y = 300
+      this._pointsText.tint = Constants.PRIMARY_COLOR_RED
+      this.addChild(this._pointsText)
+    }
   }
 
   _createSprite () {
@@ -50,7 +62,7 @@ export default class GameOver extends PIXI.Container {
     this.addChild(this._sprite)
 
     this._sprite.position.x = canvasSize.x / 2 - this._sprite.width / 2
-    this._sprite.position.y = 250
+    this._sprite.position.y = 150
   }
 
   _createBackground () {
