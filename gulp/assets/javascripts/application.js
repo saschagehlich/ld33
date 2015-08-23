@@ -14,7 +14,8 @@ export default class Application {
       Constants.GAME_WIDTH,
       Constants.GAME_HEIGHT,
       {
-        view: this._canvas
+        view: this._canvas,
+        transparent: true
       }
     )
 
@@ -22,6 +23,8 @@ export default class Application {
 
     this._loader.add('sprites', '/assets/images/sprites.json')
     this._loader.add('map', '/assets/images/map.png')
+    this._loader.add('font-normal-16', '/assets/images/fonts/font-normal-16.fnt')
+    this._loader.add('font-normal-16-sprite', '/assets/images/fonts/font-normal-16.png')
     this._loader.once('complete', this._onAssetsLoaded.bind(this))
     this._loader.load()
 
@@ -34,9 +37,9 @@ export default class Application {
     this._stats = new Stats()
     this._stats.setMode(0)
 
-    this._stats.domElement.style.position = 'absolute';
-    this._stats.domElement.style.left = '0px';
-    this._stats.domElement.style.top = '0px';
+    this._stats.domElement.style.position = 'absolute'
+    this._stats.domElement.style.left = '0px'
+    this._stats.domElement.style.top = '0px'
 
     document.body.appendChild(this._stats.domElement)
   }

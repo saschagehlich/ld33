@@ -14,15 +14,13 @@ export default class Monster extends Mob {
 
   die () {
     this._isAlive = false
-    this._speed = 10
-    this._maxSpeed = 10
+    this._speed = this._maxSpeed * 2
     this._goBackToSpawn()
   }
 
   revive () {
     this._isAlive = true
-    this._speed = 5
-    this._maxSpeed = 5
+    this._speed = this._maxSpeed
   }
 
   _goBackToSpawn () {

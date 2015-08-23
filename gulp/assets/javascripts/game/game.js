@@ -214,4 +214,8 @@ export default class Game extends PIXI.Container {
   get monsters () {
     return this._monsters
   }
+
+  get hero () {
+    return this._hero
+  }
 }

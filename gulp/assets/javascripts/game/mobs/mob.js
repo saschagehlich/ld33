@@ -18,8 +18,8 @@ export default class Mob {
     this._canConsume = []
 
     this._walking = true
-    this._maxSpeed = 5
-    this._speed = 5
+    this._maxSpeed = 8
+    this._speed = 8
     this._direction = 0
     this._directionVector = new Vector2(0, 1)
     this._destinationPosition = null
@@ -213,6 +213,7 @@ export default class Mob {
   _checkTouchedEntities () {
     const touchedEntities = this._game.getTouchedEntitiesForMob(this)
     touchedEntities.forEach((entity) => {
+      if (entity.consumed) return
       if (this._canConsumeEntity(entity)) {
         this.consumeEntity(entity)
       }
@@ -318,6 +319,6 @@ export default class Mob {
   }
 
   set canAttack (canAttack) {
-    return this._canAttack = canAttack
+    this._canAttack = canAttack
   }
 }

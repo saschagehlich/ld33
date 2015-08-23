@@ -13,6 +13,7 @@ export default class GhostActor extends MobActor {
     this._lastSpriteDirection = 'right'
     this._animationFrame = Math.floor(Math.random() * 4)
     this._animationCounter = Math.random() * ANIMATION_INTERVAL
+    this._lastTransparentTick = window.performance.now()
 
     this._textures = {
       right: [
@@ -36,6 +37,7 @@ export default class GhostActor extends MobActor {
     this.addChild(this._sprite)
 
     this._deadSprites = []
+    this._transparent = false
 
     this._arrowSprite = PIXI.Sprite.fromFrame('mobs/arrow.png')
     this._arrowSprite.anchor = new Vector2(0.5, 1)
@@ -55,7 +57,7 @@ export default class GhostActor extends MobActor {
     this._arrowSprite.visible = this._object.controlledByUser
 
     this.position.x = position.x
-    this.position.y = position.y - 6
+    this.position.y = position.y - 10
 
     if (this._object.isAlive) {
       this._updateSprite(delta)
@@ -71,6 +73,7 @@ export default class GhostActor extends MobActor {
   }
 
   _updateSprite (delta) {
+    const now = window.performance.now()
     const animationInterval = ANIMATION_INTERVAL
     if (this._animationCounter > animationInterval || this._getSpriteDirection() !== this._lastSpriteDirection) {
       this._lastSpriteDirection = this._getSpriteDirection()
@@ -82,8 +85,17 @@ export default class GhostActor extends MobActor {
     }
     this._animationCounter += delta
 
-    this._sprite.tint = this._tint
-    this._sprite.alpha = 1
+    if (this._object.isAttackable && this._object.isAlive) {
+      this._sprite.alpha = this._transparent ? 0.3 : 1.0
+      this._sprite.tint = 0xffffff
+      if (now - this._lastTransparentTick > 250) {
+        this._transparent = !this._transparent
+        this._lastTransparentTick = now
+      }
+    } else {
+      this._sprite.alpha = 1.0
+      this._sprite.tint = this._tint
+    }
   }
 
   _getSpriteDirection () {

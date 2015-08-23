@@ -9,8 +9,6 @@ export default class Hero extends Mob {
     super(...args)
 
     this._canConsume = [Gold, Bottle]
-    this._maxSpeed = 5
-    this._speed = 5
 
     this._isAttackable = true
     this._canAttack = false
