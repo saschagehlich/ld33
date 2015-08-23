@@ -13,7 +13,7 @@ export default class Application {
     this._scene = null
 
     this._sound = new Howl({
-      urls: ['/assets/audio/sound.mp3'],
+      urls: ['assets/audio/sound.mp3'],
       sprite: {
         ambient: [0, 17450, true],
         coin: [17450, 2180],
@@ -37,12 +37,12 @@ export default class Application {
 
     this._loader = new PIXI.loaders.Loader()
 
-    this._loader.add('sprites', '/assets/images/sprites.json')
-    this._loader.add('map', '/assets/images/map.png')
-    this._loader.add('font-normal-16', '/assets/images/fonts/font-normal-16.fnt')
-    this._loader.add('font-normal-16-sprite', '/assets/images/fonts/font-normal-16.png')
-    this._loader.add('font-normal-8', '/assets/images/fonts/font-normal-8.fnt')
-    this._loader.add('font-normal-8-sprite', '/assets/images/fonts/font-normal-8.png')
+    this._loader.add('sprites', 'assets/images/sprites.json')
+    this._loader.add('map', 'assets/images/map.png')
+    this._loader.add('font-normal-16', 'assets/images/fonts/font-normal-16.fnt')
+    this._loader.add('font-normal-16-sprite', 'assets/images/fonts/font-normal-16.png')
+    this._loader.add('font-normal-8', 'assets/images/fonts/font-normal-8.fnt')
+    this._loader.add('font-normal-8-sprite', 'assets/images/fonts/font-normal-8.png')
     this._loader.once('complete', this._onAssetsLoaded.bind(this))
     this._loader.load()
 
