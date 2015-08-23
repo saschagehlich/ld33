@@ -52,7 +52,7 @@ export default class Hero extends Mob {
   _updateWalkingMode () {
     if (this._monstersInRange.length && !this.canAttack) {
       this._walkingMode = 'escape'
-    } else if (this.canAttack) {
+    } else if (this._monstersInRange.length && this.canAttack) {
       this._walkingMode = 'gold'
     } else {
       this._walkingMode = 'gold'
@@ -63,12 +63,15 @@ export default class Hero extends Mob {
     const currentPosition = this._position.clone().floor()
     const { monsters } = this._game
 
-    const monstersAndRanges = monsters.map((monster) => {
-      const distVector = monster.position.clone()
-        .subtract(currentPosition).abs()
-      const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
-      return [monster, dist]
-    }).sort((a, b) => a[1] - b[1])
+    const monstersAndRanges = monsters
+      .filter((monster) => monster.canAttack)
+      .map((monster) => {
+        const distVector = monster.position.clone()
+          .subtract(currentPosition).abs()
+        const dist = Math.sqrt(distVector.x * distVector.x + distVector.y * distVector.y)
+        return [monster, dist]
+      })
+      .sort((a, b) => a[1] - b[1])
 
     const monstersInRange = monstersAndRanges.filter(([monster, dist]) => {
       return dist < this._escapeRadius
@@ -78,7 +81,7 @@ export default class Hero extends Mob {
   }
 
   _findDestinationPosition () {
-    if (this._path) {
+    if (this._path && this._walkingMode !== 'escape') {
       if (!this._path.length) {
         this._path = null
         this._onPathfindingEnded()
@@ -92,6 +95,11 @@ export default class Hero extends Mob {
         this._path = this._path.slice(1)
         return
       }
+    }
+
+    // Stop walking the path when in escape mode
+    if (this._path && this._walkingMode === 'escape') {
+      this._path = null
     }
 
     switch (this._walkingMode) {

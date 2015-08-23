@@ -87,4 +87,9 @@ export default class Menu extends PIXI.Container {
       label.position.x = canvasSize.x / 2 - label.textWidth / 2
     })
   }
+
+  dispose () {
+    this._keyboard.removeListener('pressed', this._onKeyPressed)
+    this._keyboard.dispose()
+  }
 }

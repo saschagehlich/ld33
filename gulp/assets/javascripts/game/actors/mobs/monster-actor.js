@@ -55,6 +55,9 @@ export default class MonsterActor extends MobActor {
       .add(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2)
 
     this._arrowSprite.visible = this._object.controlledByUser
+    if (this._arrowSprite.visible) {
+      this._arrowSprite.tint = this._object.controlledByUser.color
+    }
 
     this.position.x = position.x
     this.position.y = position.y - 10

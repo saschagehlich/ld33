@@ -1,6 +1,11 @@
 import { EventEmitter } from 'events'
 import Keyboard from '../keyboard'
 
+const COLORS = [
+  0xff0000,
+  0x0000ff
+]
+
 export default class Player extends EventEmitter {
   constructor (game, id) {
     super()
@@ -8,6 +13,7 @@ export default class Player extends EventEmitter {
     this._game = game
     this._id = id
     this._keyboard = new Keyboard()
+    this._color = COLORS[this._id]
 
     this.controlledMonsterIndex = null
 
@@ -17,7 +23,8 @@ export default class Player extends EventEmitter {
           up: 'UP',
           right: 'RIGHT',
           down: 'DOWN',
-          left: 'LEFT'
+          left: 'LEFT',
+          switch: 'CTRL'
         }
         break
       case 1:
@@ -25,7 +32,8 @@ export default class Player extends EventEmitter {
           up: 'W',
           right: 'D',
           down: 'S',
-          left: 'A'
+          left: 'A',
+          switch: 'E'
         }
         break
     }
@@ -48,12 +56,17 @@ export default class Player extends EventEmitter {
       case this._keys.left:
         this.emit('keypressed', this._id, 'LEFT')
         break
+      case this._keys.switch:
+        this.emit('keypressed', this._id, 'SWITCH')
+        break
     }
   }
 
   dispose () {
+    this._keyboard.removeListener('pressed', this._onKeyPressed)
     this._keyboard.dispose()
   }
 
   get id () { return this._id }
+  get color () { return this._color }
 }

@@ -80,5 +80,6 @@ export default class MenuScene extends Scene {
 
   dispose () {
     this._menu.removeListener('selected', this._onMenuSelect)
+    this._menu.dispose()
   }
 }

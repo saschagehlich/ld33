@@ -87,8 +87,8 @@ export default class Monster extends Mob {
 
       user.on('keypressed', this._onKeyPressed)
     } else {
-      this._isAttackable = true
-      this._canAttack = false
+      this.isAttackable = true
+      this.canAttack = false
       this._preferredDirection = null
       this._walking = true
 
@@ -98,5 +98,6 @@ export default class Monster extends Mob {
     }
     this._controlledByUser = user
   }
+
   get controlledByUser () { return this._controlledByUser }
 }

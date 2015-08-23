@@ -75,7 +75,8 @@ const KEYS = {
   SHIFT: 16,
   SPACE: 32,
   ENTER: 13,
-  ESC: 27
+  ESC: 27,
+  CTRL: 17
 }
 
 const KEY_CODES = _.invert(KEYS)

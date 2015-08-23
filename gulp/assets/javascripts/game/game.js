@@ -33,6 +33,7 @@ const MONSTER_COLORS = [
 export default class Game extends PIXI.Container {
   constructor (app, multiplayer = false) {
     super()
+    this._onPlayerKeyPressed = this._onPlayerKeyPressed.bind(this)
     this._onKeyPressed = this._onKeyPressed.bind(this)
 
     this._multiplayer = multiplayer
@@ -42,7 +43,7 @@ export default class Game extends PIXI.Container {
       this._players.push(new Player(this, 1))
     }
     this._players.forEach((player) => {
-      player.on('keypressed', this._onKeyPressed)
+      player.on('keypressed', this._onPlayerKeyPressed)
     })
 
     this._app = app
@@ -87,11 +88,13 @@ export default class Game extends PIXI.Container {
     this._app.sound.play(sound)
   }
 
-  _onKeyPressed (playerId, key, e) {
-    if (key === 'SHIFT') {
+  _onPlayerKeyPressed (playerId, key, e) {
+    if (key === 'SWITCH') {
       this._switchControlledMonster(playerId)
     }
+  }
 
+  _onKeyPressed (key, e) {
     if (key === 'SPACE' && this._gameOver) {
       this._app.startGame()
       e.preventDefault()
@@ -325,6 +328,8 @@ export default class Game extends PIXI.Container {
   }
 
   dispose () {
+    this._keyboard.removeListener('pressed', this._onKeyPressed)
     this._keyboard.dispose()
+    this._players.forEach((player) => player.dispose())
   }
 }
