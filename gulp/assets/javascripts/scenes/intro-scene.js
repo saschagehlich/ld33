@@ -1,6 +1,7 @@
 import Scene from './scene'
 import Keyboard from '../keyboard'
 import StoryChapter from '../intro/story-chapter'
+import RulesChapter from '../intro/rules-chapter'
 
 export default class IntroScene extends Scene {
   constructor (...args) {
@@ -13,7 +14,8 @@ export default class IntroScene extends Scene {
     this._keyboard.on('pressed', this._onKeyPressed)
 
     this._chapters = [
-      StoryChapter
+      StoryChapter,
+      RulesChapter
     ]
     this._chapterIndex = 0
     this._selectChapter(0)

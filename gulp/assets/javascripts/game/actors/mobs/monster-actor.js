@@ -31,6 +31,14 @@ export default class MonsterActor extends MobActor {
       dead: PIXI.Texture.fromFrame('mobs/monster/dead.png')
     }
 
+    for (let direction in this._textures) {
+      if (direction === 'dead') continue
+
+      this._textures[direction].forEach((texture) => {
+        texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
+      })
+    }
+
     this._sprite = new PIXI.Sprite(this._textures.right[0])
     this._sprite.anchor = new Vector2(0.5, 0.5)
     this._sprite.tint = this._tint
@@ -54,7 +62,7 @@ export default class MonsterActor extends MobActor {
       .multiply(Constants.TILE_SIZE)
       .add(Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2)
 
-    this._arrowSprite.visible = this._object.controlledByUser
+    this._arrowSprite.visible = !!this._object.controlledByUser
     if (this._arrowSprite.visible) {
       this._arrowSprite.tint = this._object.controlledByUser.color
     }

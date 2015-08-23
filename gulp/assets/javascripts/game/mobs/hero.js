@@ -7,9 +7,8 @@ import Vector2 from '../../math/vector2'
 const FART_COOLDOWN = 5000
 
 export default class Hero extends Mob {
-  constructor (game, map, spawn, dumb = false) {
-    super(game, map, spawn)
-    this._dumb = dumb
+  constructor (...args) {
+    super(...args)
 
     this._canConsume = [Gold, Bottle]
 

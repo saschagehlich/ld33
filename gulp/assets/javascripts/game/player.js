@@ -3,7 +3,9 @@ import Keyboard from '../keyboard'
 
 const COLORS = [
   0xff0000,
-  0x0000ff
+  0x0000ff,
+  0xff0000,
+  0xff0000
 ]
 
 export default class Player extends EventEmitter {
@@ -16,6 +18,8 @@ export default class Player extends EventEmitter {
     this._color = COLORS[this._id]
 
     this.controlledMonsterIndex = null
+
+    this._keys = {}
 
     switch (this._id) {
       case 0:

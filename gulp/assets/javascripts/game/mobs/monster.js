@@ -32,6 +32,7 @@ export default class Monster extends Mob {
   }
 
   update (delta) {
+    if (this._dumb) return
     if (this._isAlive && this._controlledByUser) {
       super.update(delta)
     }

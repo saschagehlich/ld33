@@ -2,10 +2,11 @@
 import Vector2 from '../../math/vector2'
 
 export default class Mob {
-  constructor (game, map, spawn) {
+  constructor (game, map, spawn, dumb = false) {
     this._game = game
     this._map = map
     this._spawn = spawn
+    this._dumb = dumb
 
     this._isAlive = true
     this.consumableRadius = 0.5
